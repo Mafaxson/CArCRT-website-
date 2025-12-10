@@ -5,9 +5,10 @@ export default function GalleryAdmin() {
   const [newPhoto, setNewPhoto] = useState({ caption: "", image: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/gallery.json")
+    fetch("/api/gallery")
       .then((res) => res.json())
       .then((data) => setGallery(data))
       .catch(() => setMessage("Failed to load gallery."));
@@ -18,17 +19,23 @@ export default function GalleryAdmin() {
   };
 
   const handleAdd = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = [...gallery, { ...newPhoto, id: Date.now() }];
-      const res = await fetch("/data/gallery.json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries(newPhoto).forEach(([key, value]) => formData.append(key, value));
+      const res = await fetch("/api/admin/gallery", {
+        method: "POST",
+        body: formData,
       });
       if (res.ok) {
-        setGallery(updated);
+        const photo = await res.json();
+        setGallery([...gallery, photo]);
         setNewPhoto({ caption: "", image: "" });
         setMessage("Photo added!");
       } else setMessage("Failed to add photo.");
@@ -41,17 +48,20 @@ export default function GalleryAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this photo?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = gallery.filter((g) => g.id !== id);
-      const res = await fetch("/data/gallery.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/gallery/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setGallery(updated);
+        setGallery(gallery.filter((g) => g.id !== id));
         setMessage("Photo deleted!");
       } else setMessage("Failed to delete photo.");
     } catch {
@@ -65,6 +75,7 @@ export default function GalleryAdmin() {
     <div>
       <h4>Gallery Admin</h4>
       <div>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin Password" />
         <input name="caption" value={newPhoto.caption} onChange={handleChange} placeholder="Caption" />
         <input name="image" value={newPhoto.image} onChange={handleChange} placeholder="Image URL or Path" />
         <button onClick={handleAdd} disabled={loading}>Add Photo</button>

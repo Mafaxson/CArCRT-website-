@@ -5,9 +5,10 @@ export default function PartnersAdmin() {
   const [newPartner, setNewPartner] = useState({ name: "", type: "Partner", website: "", logo: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/partners.json")
+    fetch("/api/partners")
       .then((res) => res.json())
       .then((data) => setPartners(data))
       .catch(() => setMessage("Failed to load partners."));
@@ -18,17 +19,23 @@ export default function PartnersAdmin() {
   };
 
   const handleAdd = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = [...partners, { ...newPartner, id: Date.now() }];
-      const res = await fetch("/data/partners.json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries(newPartner).forEach(([key, value]) => formData.append(key, value));
+      const res = await fetch("/api/admin/partners", {
+        method: "POST",
+        body: formData,
       });
       if (res.ok) {
-        setPartners(updated);
+        const { partner } = await res.json();
+        setPartners([...partners, partner]);
         setNewPartner({ name: "", type: "Partner", website: "", logo: "" });
         setMessage("Partner added!");
       } else setMessage("Failed to add partner.");
@@ -41,17 +48,20 @@ export default function PartnersAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this partner?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = partners.filter((p) => p.id !== id);
-      const res = await fetch("/data/partners.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/partners/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setPartners(updated);
+        setPartners(partners.filter((p) => p.id !== id));
         setMessage("Partner deleted!");
       } else setMessage("Failed to delete partner.");
     } catch {
@@ -65,6 +75,7 @@ export default function PartnersAdmin() {
     <div>
       <h4>Partners & Sponsors Admin</h4>
       <div>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin Password" />
         <input name="name" value={newPartner.name} onChange={handleChange} placeholder="Name" />
         <select name="type" value={newPartner.type} onChange={handleChange}>
           <option value="Partner">Partner</option>

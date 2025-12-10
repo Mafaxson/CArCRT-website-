@@ -4,26 +4,30 @@ export default function ImpactStoriesAdmin() {
   const [stories, setStories] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/stories.json")
+    fetch("/api/admin/stories?password=" + encodeURIComponent(password))
       .then((res) => res.json())
       .then((data) => setStories(data))
       .catch(() => setMessage("Failed to load stories."));
-  }, []);
+  }, [password]);
 
   const handleApprove = async (id) => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = stories.map((s) => s.id === id ? { ...s, approved: true } : s);
-      const res = await fetch("/data/stories.json", {
+      const res = await fetch(`/api/admin/stories/${id}/approve`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setStories(updated);
+        setStories(stories.map((s) => s.id === id ? { ...s, approved: true } : s));
         setMessage("Story approved!");
       } else setMessage("Failed to approve story.");
     } catch {
@@ -35,17 +39,20 @@ export default function ImpactStoriesAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this story?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = stories.filter((s) => s.id !== id);
-      const res = await fetch("/data/stories.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/stories/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setStories(updated);
+        setStories(stories.filter((s) => s.id !== id));
         setMessage("Story deleted!");
       } else setMessage("Failed to delete story.");
     } catch {
@@ -57,17 +64,22 @@ export default function ImpactStoriesAdmin() {
 
   // Simple edit: just change content
   const handleEdit = async (id, newContent) => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = stories.map((s) => s.id === id ? { ...s, content: newContent } : s);
-      const res = await fetch("/data/stories.json", {
+      const story = stories.find((s) => s.id === id);
+      if (!story) return;
+      const res = await fetch(`/api/admin/stories/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password, ...story, content: newContent }),
       });
       if (res.ok) {
-        setStories(updated);
+        setStories(stories.map((s) => s.id === id ? { ...s, content: newContent } : s));
         setMessage("Story updated!");
       } else setMessage("Failed to update story.");
     } catch {
@@ -80,6 +92,10 @@ export default function ImpactStoriesAdmin() {
   return (
     <div>
       <h4>Impact Stories Admin</h4>
+      <label>
+        Admin Password
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      </label>
       <ul>
         {stories.map((s) => (
           <li key={s.id}>

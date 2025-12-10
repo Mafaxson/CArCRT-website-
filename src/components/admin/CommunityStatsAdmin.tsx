@@ -4,9 +4,10 @@ export default function CommunityStatsAdmin() {
   const [stats, setStats] = useState({ membersReached: "", projectsImplemented: "", districtsEngaged: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/stats.json")
+    fetch("/api/stats")
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch(() => setMessage("Failed to load stats."));
@@ -17,13 +18,17 @@ export default function CommunityStatsAdmin() {
   };
 
   const handleSave = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("/data/stats.json", {
+      const res = await fetch("/api/admin/stats", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(stats),
+        body: JSON.stringify({ password, ...stats }),
       });
       if (res.ok) setMessage("Stats updated and saved to backend!");
       else setMessage("Failed to save stats.");
@@ -37,6 +42,10 @@ export default function CommunityStatsAdmin() {
   return (
     <div>
       <h4>Edit Community Stats</h4>
+      <label>
+        Admin Password
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      </label>
       <label>
         Community Members Reached
         <input name="membersReached" value={stats.membersReached} onChange={handleChange} />

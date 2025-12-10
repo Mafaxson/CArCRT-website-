@@ -7,9 +7,10 @@ export default function NewsAdmin() {
   const [newNews, setNewNews] = useState({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/news.json")
+    fetch("/api/news")
       .then((res) => res.json())
       .then((data) => setNews(data))
       .catch(() => setMessage("Failed to load news."));
@@ -28,17 +29,29 @@ export default function NewsAdmin() {
   };
 
   const handleAdd = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = [...news, { ...newNews, id: Date.now() }];
-      const res = await fetch("/data/news.json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries(newNews).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
+        }
+      });
+      const res = await fetch("/api/admin/news", {
+        method: "POST",
+        body: formData,
       });
       if (res.ok) {
-        setNews(updated);
+        const { article } = await res.json();
+        setNews([...news, article]);
         setNewNews({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "" });
         setMessage("News added!");
       } else setMessage("Failed to add news.");
@@ -51,17 +64,20 @@ export default function NewsAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this news article?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = news.filter((n) => n.id !== id);
-      const res = await fetch("/data/news.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/news/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setNews(updated);
+        setNews(news.filter((n) => n.id !== id));
         setMessage("News deleted!");
       } else setMessage("Failed to delete news.");
     } catch {
@@ -73,17 +89,31 @@ export default function NewsAdmin() {
 
   // Simple edit: just change content
   const handleEdit = async (id, newContent) => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = news.map((n) => n.id === id ? { ...n, content: newContent } : n);
-      const res = await fetch("/data/news.json", {
+      const article = news.find((n) => n.id === id);
+      if (!article) return;
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries({ ...article, content: newContent }).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
+        }
+      });
+      const res = await fetch(`/api/admin/news/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: formData,
       });
       if (res.ok) {
-        setNews(updated);
+        const { article: updatedArticle } = await res.json();
+        setNews(news.map((n) => n.id === id ? updatedArticle : n));
         setMessage("News updated!");
       } else setMessage("Failed to update news.");
     } catch {
@@ -97,6 +127,7 @@ export default function NewsAdmin() {
     <div>
       <h4>News & Updates Admin</h4>
       <div>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin Password" />
         <input name="title" value={newNews.title} onChange={handleChange} placeholder="Title" />
         <div>
           {categories.map((cat) => (

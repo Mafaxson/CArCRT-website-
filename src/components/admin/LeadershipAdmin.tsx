@@ -5,9 +5,10 @@ export default function LeadershipAdmin() {
   const [newMember, setNewMember] = useState({ name: "", role: "", bio: "", photo: "", category: "Leadership" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/leadership.json")
+    fetch("/api/leadership")
       .then((res) => res.json())
       .then((data) => setTeam(data))
       .catch(() => setMessage("Failed to load team."));
@@ -18,17 +19,23 @@ export default function LeadershipAdmin() {
   };
 
   const handleAdd = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = [...team, { ...newMember, id: Date.now() }];
-      const res = await fetch("/data/leadership.json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries(newMember).forEach(([key, value]) => formData.append(key, value));
+      const res = await fetch("/api/admin/leadership", {
+        method: "POST",
+        body: formData,
       });
       if (res.ok) {
-        setTeam(updated);
+        const { member } = await res.json();
+        setTeam([...team, member]);
         setNewMember({ name: "", role: "", bio: "", photo: "", category: "Leadership" });
         setMessage("Member added!");
       } else setMessage("Failed to add member.");
@@ -41,17 +48,20 @@ export default function LeadershipAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this member?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = team.filter((m) => m.id !== id);
-      const res = await fetch("/data/leadership.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/leadership/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setTeam(updated);
+        setTeam(team.filter((m) => m.id !== id));
         setMessage("Member deleted!");
       } else setMessage("Failed to delete member.");
     } catch {
@@ -65,6 +75,7 @@ export default function LeadershipAdmin() {
     <div>
       <h4>Leadership, Team & Internship Admin</h4>
       <div>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin Password" />
         <input name="name" value={newMember.name} onChange={handleChange} placeholder="Name" />
         <input name="role" value={newMember.role} onChange={handleChange} placeholder="Role/Position" />
         <input name="bio" value={newMember.bio} onChange={handleChange} placeholder="Bio" />

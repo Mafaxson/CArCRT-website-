@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 const statuses = ["upcoming", "ongoing", "past"];
@@ -7,9 +8,10 @@ export default function EventsAdmin() {
   const [newEvent, setNewEvent] = useState({ title: "", dateFrom: "", dateTo: "", location: "", description: "", status: "upcoming", registrationLink: "", registrationNote: "", applicationEmail: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("/data/events.json")
+    fetch("/api/events")
       .then((res) => res.json())
       .then((data) => setEvents(data))
       .catch(() => setMessage("Failed to load events."));
@@ -20,17 +22,23 @@ export default function EventsAdmin() {
   };
 
   const handleAdd = async () => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = [...events, { ...newEvent, id: Date.now() }];
-      const res = await fetch("/data/events.json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries(newEvent).forEach(([key, value]) => formData.append(key, value));
+      const res = await fetch("/api/admin/events", {
+        method: "POST",
+        body: formData,
       });
       if (res.ok) {
-        setEvents(updated);
+        const { event } = await res.json();
+        setEvents([...events, event]);
         setNewEvent({ title: "", dateFrom: "", dateTo: "", location: "", description: "", status: "upcoming", registrationLink: "", registrationNote: "", applicationEmail: "" });
         setMessage("Event added!");
       } else setMessage("Failed to add event.");
@@ -43,17 +51,20 @@ export default function EventsAdmin() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this event?")) return;
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = events.filter((e) => e.id !== id);
-      const res = await fetch("/data/events.json", {
-        method: "PUT",
+      const res = await fetch(`/api/admin/events/${id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setEvents(updated);
+        setEvents(events.filter((e) => e.id !== id));
         setMessage("Event deleted!");
       } else setMessage("Failed to delete event.");
     } catch {
@@ -65,17 +76,25 @@ export default function EventsAdmin() {
 
   // Simple edit: just change description
   const handleEdit = async (id, newDescription) => {
+    if (!password) {
+      setMessage("Admin password required");
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
-      const updated = events.map((e) => e.id === id ? { ...e, description: newDescription } : e);
-      const res = await fetch("/data/events.json", {
+      const event = events.find((e) => e.id === id);
+      if (!event) return;
+      const formData = new FormData();
+      formData.append("password", password);
+      Object.entries({ ...event, description: newDescription }).forEach(([key, value]) => formData.append(key, value));
+      const res = await fetch(`/api/admin/events/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        body: formData,
       });
       if (res.ok) {
-        setEvents(updated);
+        const { event: updatedEvent } = await res.json();
+        setEvents(events.map((e) => e.id === id ? updatedEvent : e));
         setMessage("Event updated!");
       } else setMessage("Failed to update event.");
     } catch {
@@ -89,6 +108,7 @@ export default function EventsAdmin() {
     <div>
       <h4>Events Admin</h4>
       <div>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin Password" />
         <input name="title" value={newEvent.title} onChange={handleChange} placeholder="Title" />
         <input name="dateFrom" type="date" value={newEvent.dateFrom} onChange={handleChange} placeholder="Start Date" />
         <input name="dateTo" type="date" value={newEvent.dateTo} onChange={handleChange} placeholder="End Date" />
