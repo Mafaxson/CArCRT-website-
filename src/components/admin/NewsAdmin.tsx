@@ -11,9 +11,20 @@ export default function NewsAdmin() {
 
   useEffect(() => {
     fetch("/api/news")
-      .then((res) => res.json())
-      .then((data) => setNews(data))
-      .catch(() => setMessage("Failed to load news."));
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          setMessage(`Failed to load news: ${res.status} ${text}`);
+          return [];
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) setNews(data);
+      })
+      .catch((err) => {
+        setMessage("Failed to load news: " + err.message);
+      });
   }, []);
 
   const handleChange = (e) => {
