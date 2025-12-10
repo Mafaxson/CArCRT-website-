@@ -10,18 +10,21 @@ import { getImageUrl } from "@/lib/imageUtils";
 
 export default function Partners() {
   const [partners, setPartners] = useState([]);
-  const [coachingPartners, setCoachingPartners] = useState([]);
+  const [affiliates, setAffiliates] = useState([]);
+  const [gallery, setGallery] = useState([]);
 
   useEffect(() => {
-    // Load partners and sponsors from local JSON files
     fetch('/data/partners.json')
       .then((res) => res.json())
-      .then((data) => setPartners(data))
+      .then((data) => {
+        setPartners(data.filter(p => p.type === 'Partner' || p.type === 'Sponsor'));
+        setAffiliates(data.filter(p => p.type === 'Affiliate'));
+      })
       .catch((err) => console.error('Error loading partners.json:', err));
-    fetch('/data/coaching-partners.json')
+    fetch('/data/gallery.json')
       .then((res) => res.json())
-      .then((data) => setCoachingPartners(data))
-      .catch((err) => console.error('Error loading coaching-partners.json:', err));
+      .then((data) => setGallery(data))
+      .catch((err) => console.error('Error loading gallery.json:', err));
   }, []);
   return (
     <Layout>
@@ -109,27 +112,27 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Coaching Partners Section */}
+      {/* Affiliate Partners Section */}
       <section className="section-padding bg-background">
         <div className="container-custom">
           <SectionHeader
-            title="Coaching Partners"
-            subtitle="Community-based organizations we're supporting to drive transformation"
+            title="Affiliate Partners"
+            subtitle="Organizations affiliated with our mission"
           />
-          {coachingPartners && coachingPartners.length > 0 ? (
+          {affiliates && affiliates.length > 0 ? (
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              {coachingPartners.map((cp) => (
-                <Card key={cp.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
+              {affiliates.map((affiliate) => (
+                <Card key={affiliate.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
                   <CardContent className="flex items-center gap-4 p-6">
                     <img
-                      src={cp.logo}
-                      alt={cp.name + ' logo'}
+                      src={affiliate.logo}
+                      alt={affiliate.name + ' logo'}
                       className="w-20 h-20 object-cover rounded-full border"
                     />
                     <div>
-                      <h3 className="font-bold text-lg mb-1">{cp.name}</h3>
-                      {cp.website && (
-                        <a href={cp.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm flex items-center gap-1">
+                      <h3 className="font-bold text-lg mb-1">{affiliate.name}</h3>
+                      {affiliate.website && (
+                        <a href={affiliate.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm flex items-center gap-1">
                           Website <ExternalLink size={14} />
                         </a>
                       )}
@@ -139,7 +142,35 @@ export default function Partners() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground">No coaching partners added yet. Please check back soon.</p>
+            <p className="text-center text-muted-foreground">No affiliate partners added yet. Please check back soon.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Our Work in Action Gallery */}
+      <section className="section-padding bg-background">
+        <div className="container-custom">
+          <SectionHeader
+            title="Our Work in Action"
+            subtitle="Gallery of our community impact"
+          />
+          {gallery && gallery.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {gallery.map((item) => (
+                <Card key={item.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
+                  <CardContent className="flex flex-col items-center p-4">
+                    <img
+                      src={item.image}
+                      alt={item.caption || 'Gallery image'}
+                      className="w-full h-48 object-cover rounded mb-2"
+                    />
+                    {item.caption && <div className="text-center text-sm text-muted-foreground">{item.caption}</div>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">No gallery images yet. Please check back soon.</p>
           )}
         </div>
       </section>
