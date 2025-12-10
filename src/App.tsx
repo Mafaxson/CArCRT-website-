@@ -39,6 +39,7 @@ import AdminLeadership from "./pages/admin/leadership";
 import AdminPrograms from "./pages/admin/programs";
 import AdminNews from "./pages/admin/news";
 import AdminEvents from "./pages/admin/events";
+import RestoringAgriSolutionEnterprises from "./pages/RestoringAgriSolutionEnterprises";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
           <Route path="/admin/programs" element={<AdminPrograms />} />
           <Route path="/admin/news" element={<AdminNews />} />
           <Route path="/admin/events" element={<AdminEvents />} />
+          <Route path="/partners/restoring-agrisolution-enterprises" element={<RestoringAgriSolutionEnterprises />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
