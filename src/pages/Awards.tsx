@@ -29,32 +29,93 @@ export default function Awards() {
 
   useEffect(() => {
     fetchAwards();
-    const noAwards = awards.length === 0 && certificates.length === 0;
-    return (
-      <Layout>
-        <section className="section-padding bg-background">
-          <div className="container-custom">
-            <SectionHeader
-              title="Awards & Recognition"
-              subtitle="Celebrating our achievements and the recognition of our community impact"
-            />
-            {noAwards ? (
-              <div className="text-center py-24">
-                <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4 mt-8">No Awards & Recognition</h2>
-                <p className="mb-8 text-muted-foreground">There are currently no awards, recognition, or certificates to display. Please check back soon.</p>
-              </div>
-            ) : (
-              <>
-                {/* ...existing code for displaying awards and certificates if present... */}
-              </>
-            )}
-          </div>
-        </section>
-        {lightboxImage && (
-          <ImageLightbox src={lightboxImage.src} alt={lightboxImage.alt} onClose={() => setLightboxImage(null)} />
-        )}
-      </Layout>
-    );
+    fetchCertificates();
+  }, []);
+
+  const noAwards = awards.length === 0 && certificates.length === 0;
+
+  return (
+    <Layout>
+      <section className="section-padding bg-background">
+        <div className="container-custom">
+          <SectionHeader
+            title="Awards & Recognition"
+            subtitle="Celebrating our achievements and the recognition of our community impact"
+          />
+          {noAwards ? (
+            <div className="text-center py-24">
+              <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4 mt-8">No Awards & Recognition</h2>
+              <p className="mb-8 text-muted-foreground">There are currently no awards, recognition, or certificates to display. Please check back soon.</p>
+            </div>
+          ) : (
+            <>
+              {/* Awards Section */}
+              {awards.length > 0 && (
+                <>
+                  <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4 mt-8">Our Journey of Recognition</h2>
+                  <p className="mb-8 text-muted-foreground">Milestones in our commitment to community transformation</p>
+                  <div className="grid md:grid-cols-2 gap-8 mb-12">
+                    {awards.map((award) => (
+                      <div key={award.id} className="bg-card rounded-xl shadow-card p-6 flex gap-4 items-center animate-fade-up">
+                        <div className="flex-shrink-0">
+                          <Trophy className="h-10 w-10 text-yellow-500" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-1">{award.title}</h3>
+                          <p className="text-muted-foreground text-sm mb-1">{award.description}</p>
+                          <div className="text-xs text-muted-foreground">{new Date(award.date).toLocaleDateString()}</div>
+                        </div>
+                        {award.image && (
+                          <img
+                            src={getImageUrl(award.image)}
+                            alt={award.title}
+                            className="w-16 h-16 object-cover rounded-lg cursor-pointer border"
+                            onClick={() => setLightboxImage({ src: getImageUrl(award.image), alt: award.title })}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {/* Certificates Section */}
+              {certificates.length > 0 && (
+                <>
+                  <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4 mt-8">Certificates & Achievements</h2>
+                  <p className="mb-8 text-muted-foreground">Documentation of our recognized contributions</p>
+                  <div className="grid md:grid-cols-2 gap-8 mb-12">
+                    {certificates.map((cert) => (
+                      <div key={cert.id} className="bg-card rounded-xl shadow-card p-6 flex gap-4 items-center animate-fade-up">
+                        <div className="flex-shrink-0">
+                          <Award className="h-10 w-10 text-blue-500" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-1">{cert.title}</h3>
+                          <p className="text-muted-foreground text-sm mb-1">{cert.description}</p>
+                          <div className="text-xs text-muted-foreground">{new Date(cert.date).toLocaleDateString()}</div>
+                        </div>
+                        {cert.image && (
+                          <img
+                            src={getImageUrl(cert.image)}
+                            alt={cert.title}
+                            className="w-16 h-16 object-cover rounded-lg cursor-pointer border"
+                            onClick={() => setLightboxImage({ src: getImageUrl(cert.image), alt: cert.title })}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+      {lightboxImage && (
+        <ImageLightbox src={lightboxImage.src} alt={lightboxImage.alt} onClose={() => setLightboxImage(null)} />
+      )}
+    </Layout>
+  );
                   style={{ animationDelay: `${index * 200}ms` }}
                 >
                   {/* Content */}
