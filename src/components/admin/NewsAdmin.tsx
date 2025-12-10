@@ -4,7 +4,7 @@ const categories = ["Announcements", "Programs", "Impact", "Partnerships", "Even
 
 export default function NewsAdmin() {
   const [news, setNews] = useState([]);
-  const [newNews, setNewNews] = useState({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "" });
+  const [newNews, setNewNews] = useState({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "", imageFile: null });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -17,12 +17,14 @@ export default function NewsAdmin() {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (name === "category") {
       setNewNews((prev) => {
         if (checked) return { ...prev, category: [...prev.category, value] };
         else return { ...prev, category: prev.category.filter((c) => c !== value) };
       });
+    } else if (name === "imageFile") {
+      setNewNews({ ...newNews, imageFile: files[0] });
     } else {
       setNewNews({ ...newNews, [name]: value });
     }
@@ -39,7 +41,11 @@ export default function NewsAdmin() {
       const formData = new FormData();
       formData.append("password", password);
       Object.entries(newNews).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
+        if (key === "imageFile" && value) {
+          formData.append("image", value);
+        } else if (key === "imageFile") {
+          // skip if no file
+        } else if (Array.isArray(value)) {
           formData.append(key, JSON.stringify(value));
         } else {
           formData.append(key, value);
@@ -52,7 +58,7 @@ export default function NewsAdmin() {
       if (res.ok) {
         const { article } = await res.json();
         setNews([...news, article]);
-        setNewNews({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "" });
+        setNewNews({ title: "", category: [], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "", image: "", imageFile: null });
         setMessage("News added!");
       } else setMessage("Failed to add news.");
     } catch {
@@ -141,7 +147,14 @@ export default function NewsAdmin() {
         <input name="date" type="date" value={newNews.date} onChange={handleChange} />
         <input name="link" value={newNews.link} onChange={handleChange} placeholder="Link" />
         <input name="videoUrl" value={newNews.videoUrl} onChange={handleChange} placeholder="Video URL" />
-        <input name="image" value={newNews.image} onChange={handleChange} placeholder="Image URL or Path" />
+        <div>
+          <label>Image URL:</label>
+          <input name="image" value={newNews.image} onChange={handleChange} placeholder="Image URL (optional)" />
+        </div>
+        <div>
+          <label>Or Upload Image:</label>
+          <input name="imageFile" type="file" accept="image/*" onChange={handleChange} />
+        </div>
         <button onClick={handleAdd} disabled={loading}>Add News</button>
       </div>
       <ul>
