@@ -1,183 +1,57 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Trash2, Lock, Plus } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from "react";
 
-export function AdminDashboard() {
-  const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(false);
-  
-  const [stories, setStories] = useState<any[]>([]);
-  const [stats, setStats] = useState({ membersReached: "", projectsImplemented: "", districtsEngaged: "" });
-  const [partners, setPartners] = useState<any[]>([]);
-  const [newPartner, setNewPartner] = useState({ name: "", type: "Partner", website: "" });
-  const partnerFileRef = useRef<HTMLInputElement>(null);
-  const partnerEditFileRef = useRef<HTMLInputElement>(null);
-  const [editingPartner, setEditingPartner] = useState<any>(null);
-  
-  const [featuredStories, setFeaturedStories] = useState<any[]>([]);
-  const [newFeaturedStory, setNewFeaturedStory] = useState({ title: "", category: "", summary: "", quote: "", author: "" });
-  
-  const [testimonials, setTestimonials] = useState<any[]>([]);
-  const [newTestimonial, setNewTestimonial] = useState({ quote: "", author: "" });
-  
-  const [news, setNews] = useState<any[]>([]);
-  const [newNews, setNewNews] = useState({ title: "", category: [] as string[], excerpt: "", content: "", date: new Date().toISOString().split('T')[0], link: "", videoUrl: "" });
-  const newsFileRef = useRef<HTMLInputElement>(null);
-  const newsDocRef = useRef<HTMLInputElement>(null);
-  const [editingNews, setEditingNews] = useState<any>(null);
-  const newsEditFileRef = useRef<HTMLInputElement>(null);
-  const newsEditDocRef = useRef<HTMLInputElement>(null);
-  
-  const [events, setEvents] = useState<any[]>([]);
-  const [newEvent, setNewEvent] = useState({ title: "", dateFrom: "", dateTo: "", location: "", description: "", status: "upcoming", registrationLink: "", registrationNote: "", applicationEmail: "" });
-  const eventFileRef = useRef<HTMLInputElement>(null);
-  const eventEditFileRef = useRef<HTMLInputElement>(null);
-  const eventPdfRef = useRef<HTMLInputElement>(null);
-  const eventEditPdfRef = useRef<HTMLInputElement>(null);
-  const [editingEvent, setEditingEvent] = useState<any>(null);
+const sections = [
+  { key: "community", label: "Community Members Reached, Projects Implemented, Districts Engaged" },
+  { key: "gallery", label: "Our Work in Action (Gallery)" },
+  { key: "partners", label: "Partners & Sponsors, Affiliate Partner" },
+  { key: "leadership", label: "Leadership Team, Meet Our Team, Internship" },
+  { key: "stories", label: "Impact Stories (Approve/Edit/Delete)" },
+  { key: "news", label: "News & Updates (with categories)" },
+  { key: "events", label: "Events (All, Upcoming, Ongoing, Past)" },
+];
 
-  const [leadership, setLeadership] = useState<any[]>([]);
-  const [newLeader, setNewLeader] = useState({ name: "", role: "", bio: "" });
-  const leaderFileRef = useRef<HTMLInputElement>(null);
-  const leaderEditFileRef = useRef<HTMLInputElement>(null);
-  const [editingLeader, setEditingLeader] = useState<any>(null);
-  
-  const [coordinators, setCoordinators] = useState<any[]>([]);
-  const [newCoordinator, setNewCoordinator] = useState({ name: "", region: "", bio: "" });
-  const coordinatorFileRef = useRef<HTMLInputElement>(null);
-  const coordinatorEditFileRef = useRef<HTMLInputElement>(null);
-  const [editingCoordinator, setEditingCoordinator] = useState<any>(null);
-  
-  const [representatives, setRepresentatives] = useState<any[]>([]);
-  const [newRep, setNewRep] = useState({ name: "", community: "", bio: "" });
-  const repFileRef = useRef<HTMLInputElement>(null);
-  const repEditFileRef = useRef<HTMLInputElement>(null);
-  const [editingRep, setEditingRep] = useState<any>(null);
-  
-  const [submissions, setSubmissions] = useState<any[]>([]);
-  
-  const [gallery, setGallery] = useState<any[]>([]);
-  const [newGalleryPhoto, setNewGalleryPhoto] = useState({ caption: "" });
-  const galleryFileRef = useRef<HTMLInputElement>(null);
+export default function AdminDashboard() {
+  const [active, setActive] = useState("community");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const [storiesRes, statsRes, partnersRes, featuredRes, testimonialsRes, newsRes, eventsRes, leadershipRes, coordinatorsRes, repsRes, submissionsRes, galleryRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/admin/stories?password=${encodeURIComponent(password)}`),
-        fetch(`http://localhost:3001/api/stats`),
-        fetch(`http://localhost:3001/api/partners`),
-        fetch(`http://localhost:3001/api/featured-stories`),
-        fetch(`http://localhost:3001/api/testimonials`),
-        fetch(`http://localhost:3001/api/news`),
-        fetch(`http://localhost:3001/api/events`),
-        fetch(`http://localhost:3001/api/leadership`),
-        fetch(`http://localhost:3001/api/coordinators`),
-        fetch(`http://localhost:3001/api/representatives`),
-        fetch(`http://localhost:3001/api/admin/submissions?password=${encodeURIComponent(password)}`),
-        fetch(`http://localhost:3001/api/gallery`),
-      ]);
-
-      if (storiesRes.ok) {
-        setStories(await storiesRes.json());
-        setStats(await statsRes.json());
-        setPartners(await partnersRes.json());
-        setFeaturedStories(await featuredRes.json());
-        setTestimonials(await testimonialsRes.json());
-        setNews(await newsRes.json());
-        setEvents(await eventsRes.json());
-        setLeadership(await leadershipRes.json());
-        setCoordinators(await coordinatorsRes.json());
-        setRepresentatives(await repsRes.json());
-        setSubmissions(await submissionsRes.json());
-        setGallery(await galleryRes.json());
-        setAuthenticated(true);
-        toast.success("Logged in successfully!");
-      } else {
-        toast.error("Invalid admin password");
-      }
-    } catch (error) {
-      toast.error("Failed to authenticate");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateStats = async () => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/admin/stats`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, ...stats }),
-      });
-      if (response.ok) toast.success("Stats updated!");
-    } catch (error) {
-      toast.error("Failed to update stats");
-    }
-  };
-
-  const addPartner = async () => {
-    const formData = new FormData();
-    formData.append("password", password);
-    formData.append("name", newPartner.name);
-    formData.append("type", newPartner.type);
-    formData.append("website", newPartner.website);
-    if (partnerFileRef.current?.files?.[0]) {
-      formData.append("logo", partnerFileRef.current.files[0]);
-    }
-
-    try {
-      const response = await fetch(`http://localhost:3001/api/admin/partners`, {
-        method: "POST",
-        body: formData,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setPartners([...partners, data.partner]);
-        setNewPartner({ name: "", type: "Partner", website: "" });
-        if (partnerFileRef.current) partnerFileRef.current.value = "";
-        toast.success("Partner added!");
-      }
-    } catch (error) {
-      toast.error("Failed to add partner");
-    }
-  };
-
-  const deletePartner = async (id: string) => {
-    if (!confirm("Delete this partner?")) return;
-    try {
-      const response = await fetch(`http://localhost:3001/api/admin/partners/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      if (response.ok) {
-        setPartners(partners.filter((p) => p.id !== id));
-        toast.success("Partner deleted!");
-      }
-    } catch (error) {
-      toast.error("Failed to delete partner");
-    }
-  };
-
-  const updatePartner = async () => {
-    if (!editingPartner) return;
-    
-    const formData = new FormData();
-    formData.append("password", password);
-    formData.append("name", editingPartner.name);
-    formData.append("type", editingPartner.type);
-    formData.append("website", editingPartner.website || "");
-    if (partnerEditFileRef.current?.files?.[0]) {
+  return (
+    <div className="admin-dashboard">
+      <aside className="admin-sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav>
+          <ul>
+            {sections.map(s => (
+              <li key={s.key}>
+                <button onClick={() => setActive(s.key)} className={active === s.key ? "active" : ""}>{s.label}</button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+      <main className="admin-main">
+        <div className="admin-section">
+          <h3>{sections.find(s => s.key === active)?.label}</h3>
+          {active === "community" ? (
+            <CommunityStatsAdmin />
+          ) : active === "gallery" ? (
+            <GalleryAdmin />
+          ) : active === "partners" ? (
+            <PartnersAdmin />
+          ) : active === "leadership" ? (
+            <LeadershipAdmin />
+          ) : active === "stories" ? (
+            <ImpactStoriesAdmin />
+          ) : active === "news" ? (
+            <NewsAdmin />
+          ) : active === "events" ? (
+            <EventsAdmin />
+          ) : (
+            <p>CRUD interface for {sections.find(s => s.key === active)?.label} will appear here.</p>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
       formData.append("logo", partnerEditFileRef.current.files[0]);
     }
 
