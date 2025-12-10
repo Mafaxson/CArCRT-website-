@@ -36,8 +36,17 @@ export default function Events() {
     fetch('/data/events.json')
       .then((res) => res.json())
       .then((json) => {
-        setAllEvents(json);
-        setFilteredEvents(json);
+        // Map fields to expected frontend structure
+        const mapped = json.map(event => ({
+          ...event,
+          date: event.dateFrom || event.date || "",
+          time: event.time || "",
+          status: event.status || "upcoming",
+          application_pdf: event.applicationPdf || event.application_pdf || "",
+          registration_link: event.registrationLink || event.registration_link || "",
+        }));
+        setAllEvents(mapped);
+        setFilteredEvents(mapped);
       })
       .catch((err) => {
         console.error('Error loading events.json:', err);
