@@ -9,8 +9,6 @@ const sections = [
   { key: "coaching", label: "Coaching Partners", path: "/admin/coaching" },
   { key: "affiliates", label: "Affiliate Partners", path: "/admin/affiliates" },
   { key: "gallery", label: "Gallery", path: "/admin/gallery" },
-  { key: "awards", label: "Awards & Recognition", path: "/admin/awards" },
-  { key: "certificates", label: "Certificates", path: "/admin/certificates" },
   { key: "leadership", label: "Leadership, Team & Interns", path: "/admin/leadership" },
   { key: "programs", label: "Programs", path: "/admin/programs" },
   { key: "news", label: "News & Updates", path: "/admin/news" },

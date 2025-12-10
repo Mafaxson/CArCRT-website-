@@ -79,12 +79,7 @@ export default function History() {
             </div>
 
             <div className="text-center mt-12">
-              <Link to="/awards">
-                <Button className="gap-2">
-                  View Our Awards & Recognition
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+                      {/* Removed Awards link */}
             </div>
           </div>
         </div>

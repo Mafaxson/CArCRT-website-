@@ -17,7 +17,6 @@ import NewsDetail from "./pages/NewsDetail";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import GetInvolved from "./pages/GetInvolved";
-import Awards from "./pages/Awards";
 import Partners from "./pages/Partners";
 import CoachingPartnerDetail from "./pages/CoachingPartnerDetail";
 import Donate from "./pages/Donate";
@@ -33,8 +32,6 @@ import AdminPartners from "./pages/admin/partners";
 import AdminCoachingPartners from "./pages/admin/coaching";
 import AdminAffiliates from "./pages/admin/affiliates";
 import AdminGallery from "./pages/admin/gallery";
-import AdminAwards from "./pages/admin/awards";
-import AdminCertificates from "./pages/admin/certificates";
 import AdminLeadership from "./pages/admin/leadership";
 import AdminPrograms from "./pages/admin/programs";
 import AdminNews from "./pages/admin/news";
@@ -62,7 +59,6 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/get-involved" element={<GetInvolved />} />
-          <Route path="/awards" element={<Awards />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/coaching-partners/:slug" element={<CoachingPartnerDetail />} />
           <Route path="/donate" element={<Donate />} />
@@ -79,8 +75,6 @@ const App = () => (
           <Route path="/admin/coaching" element={<AdminCoachingPartners />} />
           <Route path="/admin/affiliates" element={<AdminAffiliates />} />
           <Route path="/admin/gallery" element={<AdminGallery />} />
-          <Route path="/admin/awards" element={<AdminAwards />} />
-          <Route path="/admin/certificates" element={<AdminCertificates />} />
           <Route path="/admin/leadership" element={<AdminLeadership />} />
           <Route path="/admin/programs" element={<AdminPrograms />} />
           <Route path="/admin/news" element={<AdminNews />} />
