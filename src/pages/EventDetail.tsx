@@ -32,29 +32,28 @@ const EventDetail = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('id', id)
-          .single();
-        
-        if (data) {
-          setEvent(data);
+        const res = await fetch('/data/events.json');
+        const events = await res.json();
+        const found = events.find((e: any) => e.id === id);
+        if (found) {
+          setEvent({
+            ...found,
+            date: found.dateFrom || found.date || "",
+            time: found.time || "",
+            status: found.status || "upcoming",
+            application_pdf: found.applicationPdf || found.application_pdf || "",
+            registration_link: found.registrationLink || found.registration_link || "",
+          });
         } else {
           navigate("/events");
         }
-        if (error) {
-          console.error('Supabase error:', error);
-          navigate("/events");
-        }
       } catch (error) {
-        console.error("Error fetching event:", error);
+        console.error("Error loading event from events.json:", error);
         navigate("/events");
       } finally {
         setLoading(false);
       }
     };
-
     fetchEvent();
   }, [id, navigate]);
 
