@@ -45,7 +45,11 @@ export default function Leadership() {
         const res = await fetch('/data/leadership.json');
         const data = await res.json();
         const leadership = data.filter((m: any) => m.category === 'Leadership');
-        const coordinators = data.filter((m: any) => m.category === 'Coordinator');
+        // Map coordinators to ensure 'region' field is present
+        const coordinators = data.filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
+          ...c,
+          region: c.region || c.role || '',
+        }));
         const interns = data.filter((m: any) => m.category === 'Representative');
         setLeadershipTeam(leadership);
         setFieldCoordinators(coordinators);
