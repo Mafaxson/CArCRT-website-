@@ -44,13 +44,15 @@ export default function Leadership() {
       try {
         const res = await fetch('/data/leadership.json');
         const data = await res.json();
+        console.log('Loaded leadership.json:', data);
         const leadership = data.filter((m: any) => m.category === 'Leadership');
-        // Map coordinators to ensure 'region' field is present
         const coordinators = data.filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
           ...c,
           region: c.region || c.role || '',
         }));
         const interns = data.filter((m: any) => m.category === 'Representative');
+        console.log('Leadership:', leadership);
+        console.log('Coordinators:', coordinators);
         setLeadershipTeam(leadership);
         setFieldCoordinators(coordinators);
         setInterns(interns);
@@ -92,35 +94,39 @@ export default function Leadership() {
             subtitle="Our core team bringing expertise and passion to community development"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {leadershipTeam.map((member, index) => (
-              <Card
-                key={member.id}
-                className="card-hover border-none shadow-card animate-fade-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="p-6 text-center">
-                  {member.photo ? (
-                    <img
-                      src={getImageUrl(member.photo)}
-                      alt={member.name}
-                      className="w-24 h-24 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => setLightboxImage({ src: getImageUrl(member.photo!), alt: member.name })}
-                    />
-                  ) : (
-                    <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center">
-                      <User className="h-12 w-12 text-primary-foreground" />
-                    </div>
-                  )}
-                  <h3 className="font-heading font-semibold text-lg text-foreground mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-primary font-medium text-sm mb-3">{member.role}</p>
-                  <p className="text-muted-foreground text-sm">{member.bio}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {leadershipTeam.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">No leadership team data found.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {leadershipTeam.map((member, index) => (
+                <Card
+                  key={member.id}
+                  className="card-hover border-none shadow-card animate-fade-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CardContent className="p-6 text-center">
+                    {member.photo ? (
+                      <img
+                        src={getImageUrl(member.photo)}
+                        alt={member.name}
+                        className="w-24 h-24 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => setLightboxImage({ src: getImageUrl(member.photo!), alt: member.name })}
+                      />
+                    ) : (
+                      <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center">
+                        <User className="h-12 w-12 text-primary-foreground" />
+                      </div>
+                    )}
+                    <h3 className="font-heading font-semibold text-lg text-foreground mb-1">
+                      {member.name}
+                    </h3>
+                    <p className="text-primary font-medium text-sm mb-3">{member.role}</p>
+                    <p className="text-muted-foreground text-sm">{member.bio}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -132,37 +138,41 @@ export default function Leadership() {
             subtitle="Dedicated coordinators working across regions to drive community transformation"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {fieldCoordinators.map((coordinator, index) => (
-              <Card
-                key={coordinator.id}
-                className="card-hover border-none shadow-card animate-fade-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="p-6 text-center">
-                  {coordinator.photo ? (
-                    <img
-                      src={getImageUrl(coordinator.photo)}
-                      alt={coordinator.name}
-                      className="w-16 h-16 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => setLightboxImage({ src: getImageUrl(coordinator.photo!), alt: coordinator.name })}
-                    />
-                  ) : (
-                    <div className="w-16 h-16 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
-                      <User className="h-8 w-8 text-accent" />
-                    </div>
-                  )}
-                  <h3 className="font-heading font-semibold text-foreground mb-1">
-                    {coordinator.name}
-                  </h3>
-                  <p className="text-accent font-medium text-sm mb-2">{coordinator.region}</p>
-                  {coordinator.bio && (
-                    <p className="text-muted-foreground text-sm">{coordinator.bio}</p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {fieldCoordinators.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">No coordinators found.</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {fieldCoordinators.map((coordinator, index) => (
+                <Card
+                  key={coordinator.id}
+                  className="card-hover border-none shadow-card animate-fade-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CardContent className="p-6 text-center">
+                    {coordinator.photo ? (
+                      <img
+                        src={getImageUrl(coordinator.photo)}
+                        alt={coordinator.name}
+                        className="w-16 h-16 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => setLightboxImage({ src: getImageUrl(coordinator.photo!), alt: coordinator.name })}
+                      />
+                    ) : (
+                      <div className="w-16 h-16 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
+                        <User className="h-8 w-8 text-accent" />
+                      </div>
+                    )}
+                    <h3 className="font-heading font-semibold text-foreground mb-1">
+                      {coordinator.name}
+                    </h3>
+                    <p className="text-accent font-medium text-sm mb-2">{coordinator.region}</p>
+                    {coordinator.bio && (
+                      <p className="text-muted-foreground text-sm">{coordinator.bio}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
