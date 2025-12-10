@@ -73,11 +73,17 @@ export default function Partners() {
               subtitle="Community-based organization we're supporting to drive transformation"
             />
             <div className="flex flex-col md:flex-row gap-8 items-center mb-4">
-              <img
-                src={restoringAgri.logo}
-                alt={restoringAgri.name + ' logo'}
-                className="w-32 h-32 object-cover rounded-full border mb-4 md:mb-0"
-              />
+              {restoringAgri.logo ? (
+                <img
+                  src={restoringAgri.logo.startsWith('http') ? restoringAgri.logo : getImageUrl(restoringAgri.logo)}
+                  alt={restoringAgri.name + ' logo'}
+                  className="w-32 h-32 object-cover rounded-full border mb-4 md:mb-0"
+                />
+              ) : (
+                <div className="w-32 h-32 flex items-center justify-center bg-muted rounded-full border mb-4 md:mb-0">
+                  <span className="text-xs text-muted-foreground text-center">No Logo</span>
+                </div>
+              )}
               <div className="flex-1">
                 <div className="inline-block px-3 py-1 mb-2 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Affiliate Partner</div>
                 <p className="mb-2 text-muted-foreground line-clamp-4">{restoringAgri.description}</p>
