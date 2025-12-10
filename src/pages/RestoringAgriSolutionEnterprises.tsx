@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 
 export default function RestoringAgriSolutionEnterprises() {
@@ -23,24 +24,28 @@ export default function RestoringAgriSolutionEnterprises() {
   return (
     <Layout>
       <section className="section-padding bg-background">
-        <div className="container-custom">
-          <SectionHeader
-            title={restoringAgri.name}
-            subtitle="Community-based organization we're supporting to drive transformation"
-          />
-          <div className="flex flex-col md:flex-row gap-8 items-center mb-8">
+        <div className="container-custom max-w-4xl mx-auto">
+          <div className="flex flex-col items-center text-center mb-8">
             <img
               src={restoringAgri.logo}
               alt={restoringAgri.name + ' logo'}
-              className="w-32 h-32 object-cover rounded-full border mb-4 md:mb-0"
+              className="w-36 h-36 object-cover rounded-full border-4 border-blue-200 shadow-lg mb-4"
             />
-            <div className="flex-1">
-              <div className="inline-block px-3 py-1 mb-2 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Affiliate Partner</div>
-              <p className="mb-2 text-muted-foreground">{restoringAgri.description}</p>
-              <div className="text-sm text-muted-foreground mb-1"><b>Focus:</b> {restoringAgri.focus}</div>
-              <div className="text-sm text-muted-foreground mb-1"><b>Established:</b> {restoringAgri.established}</div>
-              <div className="text-sm text-muted-foreground mb-1"><b>Location:</b> {restoringAgri.location}</div>
-              <div className="text-sm text-muted-foreground mb-1"><b>Mission:</b> {restoringAgri.mission}</div>
+            <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">
+              {restoringAgri.name}
+            </h1>
+            <Badge className="mb-2 bg-blue-100 text-blue-700 text-xs font-semibold px-4 py-1 rounded-full uppercase tracking-wide">Affiliate Partner</Badge>
+            <div className="text-base text-muted-foreground mb-2 font-medium">
+              Community-based organization we're supporting to drive transformation
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6 mb-8 text-left">
+            <p className="mb-4 text-lg leading-relaxed text-gray-800">{restoringAgri.description}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div><span className="font-semibold">Focus:</span> {restoringAgri.focus}</div>
+              <div><span className="font-semibold">Established:</span> {restoringAgri.established}</div>
+              <div><span className="font-semibold">Location:</span> {restoringAgri.location}</div>
+              <div className="md:col-span-2"><span className="font-semibold">Mission:</span> {restoringAgri.mission}</div>
             </div>
           </div>
           <SectionHeader
