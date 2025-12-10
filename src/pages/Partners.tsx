@@ -10,21 +10,26 @@ import { getImageUrl } from "@/lib/imageUtils";
 
 export default function Partners() {
   const [partners, setPartners] = useState([]);
-  const [affiliates, setAffiliates] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [restoringAgri, setRestoringAgri] = useState(null);
 
   useEffect(() => {
     fetch('/data/partners.json')
       .then((res) => res.json())
       .then((data) => {
         setPartners(data.filter(p => p.type === 'Partner' || p.type === 'Sponsor'));
-        setAffiliates(data.filter(p => p.type === 'Affiliate'));
       })
       .catch((err) => console.error('Error loading partners.json:', err));
     fetch('/data/gallery.json')
       .then((res) => res.json())
       .then((data) => setGallery(data))
       .catch((err) => console.error('Error loading gallery.json:', err));
+    fetch('/data/coaching-partners.json')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.length > 0) setRestoringAgri(data[0]);
+      })
+      .catch((err) => console.error('Error loading coaching-partners.json:', err));
   }, []);
   return (
     <Layout>
@@ -112,68 +117,54 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Affiliate Partners Section */}
-      <section className="section-padding bg-background">
-        <div className="container-custom">
-          <SectionHeader
-            title="Affiliate Partners"
-            subtitle="Organizations affiliated with our mission"
-          />
-          {affiliates && affiliates.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
-              {affiliates.map((affiliate) => (
-                <Card key={affiliate.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
-                  <CardContent className="flex items-center gap-4 p-6">
-                    <img
-                      src={affiliate.logo}
-                      alt={affiliate.name + ' logo'}
-                      className="w-20 h-20 object-cover rounded-full border"
-                    />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{affiliate.name}</h3>
-                      {affiliate.website && (
-                        <a href={affiliate.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm flex items-center gap-1">
-                          Website <ExternalLink size={14} />
-                        </a>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+      {/* Restoring AgriSolution Enterprises Section */}
+      {restoringAgri && (
+        <section className="section-padding bg-background">
+          <div className="container-custom">
+            <SectionHeader
+              title={restoringAgri.name}
+              subtitle="Community-based organization we're supporting to drive transformation"
+            />
+            <div className="flex flex-col md:flex-row gap-8 items-center mb-8">
+              <img
+                src={restoringAgri.logo}
+                alt={restoringAgri.name + ' logo'}
+                className="w-32 h-32 object-cover rounded-full border mb-4 md:mb-0"
+              />
+              <div>
+                <p className="mb-2 text-muted-foreground">{restoringAgri.description}</p>
+                <div className="text-sm text-muted-foreground mb-1"><b>Focus:</b> {restoringAgri.focus}</div>
+                <div className="text-sm text-muted-foreground mb-1"><b>Established:</b> {restoringAgri.established}</div>
+                <div className="text-sm text-muted-foreground mb-1"><b>Location:</b> {restoringAgri.location}</div>
+                <div className="text-sm text-muted-foreground mb-1"><b>Mission:</b> {restoringAgri.mission}</div>
+              </div>
             </div>
-          ) : (
-            <p className="text-center text-muted-foreground">No affiliate partners added yet. Please check back soon.</p>
-          )}
-        </div>
-      </section>
-
-      {/* Our Work in Action Gallery */}
-      <section className="section-padding bg-background">
-        <div className="container-custom">
-          <SectionHeader
-            title="Our Work in Action"
-            subtitle="Gallery of our community impact"
-          />
-          {gallery && gallery.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {gallery.map((item) => (
-                <Card key={item.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
-                  <CardContent className="flex flex-col items-center p-4">
-                    <img
-                      src={item.image}
-                      alt={item.caption || 'Gallery image'}
-                      className="w-full h-48 object-cover rounded mb-2"
-                    />
-                    {item.caption && <div className="text-center text-sm text-muted-foreground">{item.caption}</div>}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground">No gallery images yet. Please check back soon.</p>
-          )}
-        </div>
-      </section>
+            {/* Our Work in Action Gallery */}
+            <SectionHeader
+              title="Our Work in Action"
+              subtitle="Gallery of our community impact"
+            />
+            {gallery && gallery.length > 0 ? (
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                {gallery.map((item) => (
+                  <Card key={item.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
+                    <CardContent className="flex flex-col items-center p-4">
+                      <img
+                        src={item.image}
+                        alt={item.caption || 'Gallery image'}
+                        className="w-full h-48 object-cover rounded mb-2"
+                      />
+                      {item.caption && <div className="text-center text-sm text-muted-foreground">{item.caption}</div>}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">No gallery images yet. Please check back soon.</p>
+            )}
+          </div>
+        </section>
+      )}
     </Layout>
   );
 }
