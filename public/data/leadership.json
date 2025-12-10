@@ -1,0 +1,74 @@
+[
+  {
+    "id": "leader-ceo-001",
+    "name": "Saffa Andrew Koroma",
+    "role": "Chief Executive Officer",
+    "bio": "Leading CArCRT's strategic vision and organizational growth across Sierra Leone.",
+    "photo": "/uploads/1764856177950-CEO PIC.jpg",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764861451406",
+    "name": "Nancy Admire Mustapha-",
+    "role": "Director of Strategy and Learning",
+    "bio": "Guides strategy and learning at CArCRT to improve impact through research, planning and innovation.",
+    "photo": "/uploads/1764861451396-Nancy Admire Mustapha- Director of Strategy and Learning.jpg",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764862044267",
+    "name": "Mannah Kamara ",
+    "role": "Operation Manager",
+    "bio": "Oversees CArCRT’s daily operations, ensuring smooth programs and strong community impact",
+    "photo": "/uploads/1764862044261-unnamed.jpg",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764862426227",
+    "name": "Tamba Max Koromba ",
+    "role": "Compliance Manager",
+    "bio": "Ensures compliance and accountability at CArCRT through regulatory oversight and ethical standards.",
+    "photo": "/uploads/1764862426215-Gemini_Generated_Image_72hxb972hxb972hx.png",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764862852418",
+    "name": "Matenneh Swaray",
+    "role": "Head of Women,Youth Empowerment and Food Security.",
+    "bio": "Leads CArCRT’s initiatives on women’s empowerment, youth development, and food security, driving programs that strengthen livelihoods and improve community resilience.",
+    "photo": "/uploads/1764862852416-unnamed (1).jpg",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764863305356",
+    "name": "Jefery K Morison",
+    "role": " Head of Social Services and Public Health",
+    "bio": "Oversees CArCRT’s social services and public health programs, advancing community well-being through outreach, support systems, and health-focused initiatives.”",
+    "photo": "/uploads/1764957681077-WhatsApp Image 2025-12-05 at 17.56.56_ace1bfd3.jpg",
+    "category": "Leadership"
+  },
+  {
+    "id": "leader-1764863532043",
+    "name": "Mariama S Kallon ",
+    "role": "Sponsorship Coordinator",
+    "bio": "Coordinates sponsorships to provide support and resources to communities we serve.",
+    "photo": "/uploads/1764863532039-WhatsApp Image 2025-12-04 at 14.25.28_fa8b8b17.jpg",
+    "category": "Coordinator"
+  },
+  {
+    "id": "leader-1764863692795",
+    "name": "Rebecca Kargbo",
+    "role": " Women and Youth Empowerment Coordinator",
+    "bio": "Leads programs empowering women and youth for growth, skills, and community impact.",
+    "photo": "/uploads/1764863692793-unnamed (2).jpg",
+    "category": "Coordinator"
+  },
+  {
+    "id": "leader-1764868499770",
+    "name": "Hassan SHERIFF",
+    "role": " Head of Media and Communications",
+    "bio": "Leads media and communications to promote our mission and engage the community.",
+    "photo": "/uploads/1764868499760-WhatsApp Image 2025-12-04 at 15.58.35_14a33985.jpg",
+    "category": "Coordinator"
+  }
+]
