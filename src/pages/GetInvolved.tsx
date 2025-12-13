@@ -64,17 +64,13 @@ export default function GetInvolved() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
-      const { error } = await supabase
-        .from('submissions')
-        .insert([{
-          type: 'volunteer',
-          data: formData,
-          status: 'pending'
-        }]);
-
-      if (!error) {
+      const res = await fetch("/api/submit/volunteer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
         toast({
           title: "Thank you for your interest!",
           description: "We'll be in touch soon to discuss how you can get involved.",

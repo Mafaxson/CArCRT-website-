@@ -41,17 +41,13 @@ export default function Donate() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
-      const { error } = await supabase
-        .from('submissions')
-        .insert([{
-          type: 'donation',
-          data: formData,
-          status: 'pending'
-        }]);
-
-      if (!error) {
+      const res = await fetch("/api/submit/donation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
         setSubmitted(true);
         toast({
           title: "Donation Request Received!",
