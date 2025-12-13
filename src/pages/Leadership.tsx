@@ -66,7 +66,7 @@ export default function Leadership() {
       }
       try {
         // Intern groups from representatives.json
-        const res = await fetch('data/representatives.json');
+        const res = await fetch('/data/representatives.json');
         const data = await res.json();
         setInternGroups(data);
       } catch (error) {
