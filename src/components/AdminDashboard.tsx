@@ -1494,96 +1494,19 @@ export default function AdminDashboard() {
           <TabsContent value="representatives">
             <Card>
               <CardHeader>
-                <CardTitle>Internship Management</CardTitle>
+                <CardTitle>2020 Interns</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {editingRep ? (
-                  <div className="space-y-4 p-4 border rounded">
-                    <h3 className="font-semibold">Edit Intern</h3>
-                    {editingRep.photo && (
-                      <div className="flex items-center gap-4">
-                        <img src={`http://localhost:3001${editingRep.photo}`} alt={editingRep.name} className="w-20 h-20 rounded object-cover" />
-                        <span className="text-sm text-muted-foreground">Current Photo</span>
-                      </div>
-                    )}
-                    <Input
-                      placeholder="Name"
-                      value={editingRep.name}
-                      onChange={(e) => setEditingRep({ ...editingRep, name: e.target.value })}
-                    />
-                    <Input
-                      placeholder="Department/Field"
-                      value={editingRep.community}
-                      onChange={(e) => setEditingRep({ ...editingRep, community: e.target.value })}
-                    />
-                    <Textarea
-                      placeholder="Bio/Description"
-                      value={editingRep.bio}
-                      onChange={(e) => setEditingRep({ ...editingRep, bio: e.target.value })}
-                    />
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Change Photo (optional)</label>
-                      <Input type="file" ref={repEditFileRef} accept="image/*" />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={updateRepresentative}>Save Changes</Button>
-                      <Button variant="outline" onClick={() => setEditingRep(null)}>Cancel</Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="Intern Name"
-                      value={newRep.name}
-                      onChange={(e) => setNewRep({ ...newRep, name: e.target.value })}
-                    />
-                    <Input
-                      placeholder="Department/Field (e.g., Communications)"
-                      value={newRep.community}
-                      onChange={(e) => setNewRep({ ...newRep, community: e.target.value })}
-                    />
-                    <Textarea
-                      placeholder="Bio/Description"
-                      value={newRep.bio}
-                      onChange={(e) => setNewRep({ ...newRep, bio: e.target.value })}
-                    />
-                    <Input type="file" ref={repFileRef} accept="image/*" />
-                    <Button onClick={addRepresentative}>
-                      <Plus className="mr-2 h-4 w-4" /> Add Intern
-                    </Button>
-                  </div>
-                )}
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <img
+                  src="/uploads/2020-interns.jpg"
+                  alt="2020 Interns Group"
+                  className="w-full max-w-xl rounded shadow mb-4"
+                  style={{ objectFit: 'cover' }}
+                />
+                <p className="text-center text-lg font-semibold text-primary mt-2">CArCRT 2020 Interns</p>
+                <p className="text-center text-sm text-muted-foreground mt-1">Group picture of the 2020 internship cohort</p>
               </CardContent>
             </Card>
-
-            <div className="mt-4 space-y-4">
-              {representatives.map((rep) => (
-                <Card key={rep.id}>
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex gap-4">
-                        {rep.photo && (
-                          <img src={`http://localhost:3001${rep.photo}`} alt={rep.name} className="w-20 h-20 rounded object-cover" />
-                        )}
-                        <div>
-                          <h3 className="font-semibold">{rep.name}</h3>
-                          <p className="text-sm text-muted-foreground">{rep.community}</p>
-                          <p className="mt-2 text-sm">{rep.bio}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => setEditingRep(rep)}>
-                          Edit
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => deleteRepresentative(rep.id)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </TabsContent>
 
           <TabsContent value="gallery">
