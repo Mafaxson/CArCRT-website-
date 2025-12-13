@@ -1,3 +1,4 @@
+
 import { Layout } from "@/components/layout/Layout";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,14 @@ import { Button } from "@/components/ui/button";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { supabase } from "@/lib/supabaseClient";
 import { getImageUrl } from "@/lib/imageUtils";
+
+interface InternGroup {
+  id: string;
+  name: string;
+  community: string;
+  bio: string;
+  photo?: string;
+}
 
 interface LeadershipMember {
   id: string;
@@ -36,12 +45,13 @@ interface Intern {
 export default function Leadership() {
   const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>([]);
   const [fieldCoordinators, setFieldCoordinators] = useState<Coordinator[]>([]);
-  const [interns, setInterns] = useState<Intern[]>([]);
+  const [internGroups, setInternGroups] = useState<InternGroup[]>([]);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Leadership and coordinators from leadership.json
         const res = await fetch('/data/leadership.json');
         const data = await res.json();
         const leadership = data.filter((m: any) => m.category === 'Leadership');
@@ -49,12 +59,18 @@ export default function Leadership() {
           ...c,
           region: c.region || c.role || '',
         }));
-        const interns = data.filter((m: any) => m.category === 'Representative');
         setLeadershipTeam(leadership);
         setFieldCoordinators(coordinators);
-        setInterns(interns);
       } catch (error) {
         console.error('Failed to fetch leadership data:', error);
+      }
+      try {
+        // Intern groups from representatives.json
+        const res = await fetch('/data/representatives.json');
+        const data = await res.json();
+        setInternGroups(data);
+      } catch (error) {
+        console.error('Failed to fetch intern groups:', error);
       }
     };
     fetchData();
@@ -174,22 +190,35 @@ export default function Leadership() {
       </section>
 
 
-      {/* Internship Section - Group Only */}
+      {/* Internship Section - All Groups */}
       <section className="section-padding bg-muted">
         <div className="container-custom">
           <SectionHeader
             title="Internship"
-            subtitle="CArCRT Social Work Interns, 2025 Cohort"
+            subtitle="CArCRT Internship Cohorts by Year"
           />
-          <div className="flex flex-col items-center justify-center py-8">
-            <img
-              src="/uploads/1764862910949-WhatsApp Image 2025-12-04 at 15.28.22_96734277.jpg"
-              alt="CArCRT Social Work Interns, 2025 Cohort"
-              className="w-full max-w-xl rounded shadow mb-4"
-              style={{ objectFit: 'cover' }}
-            />
-            <p className="text-center text-lg font-semibold text-primary mt-2">Social Work Interns, 2025</p>
-            <p className="text-center text-sm text-muted-foreground mt-1 max-w-2xl">Social Work Interns from Eastern Technical University, 2025 cohort, gaining hands-on experience as CArCRT supports their professional growth through real community engagement.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8">
+            {internGroups.length === 0 ? (
+              <div className="text-center text-muted-foreground col-span-2">No intern groups found.</div>
+            ) : (
+              internGroups.map((group) => (
+                <div key={group.id} className="flex flex-col items-center justify-center">
+                  {group.photo && (
+                    <img
+                      src={group.photo}
+                      alt={group.name}
+                      className="w-full max-w-xl rounded shadow mb-4"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  )}
+                  <p className="text-center text-lg font-semibold text-primary mt-2">{group.name}</p>
+                  <p className="text-center text-sm text-muted-foreground mt-1 max-w-2xl">{group.bio}</p>
+                  {group.community && (
+                    <p className="text-center text-xs text-muted-foreground mt-1 max-w-2xl">{group.community}</p>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
