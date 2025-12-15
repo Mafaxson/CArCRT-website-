@@ -1,47 +1,7 @@
+
 // --- Intern Groups (SQLite) ---
-const db = require('./internGroups.db.js');
-
-// Get all intern groups
-app.get('/api/intern-groups', (req, res) => {
-  db.all('SELECT * FROM intern_groups', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
-});
-
-// Add a new intern group
-app.post('/api/intern-groups', (req, res) => {
-  const { id, name, community, bio, photo } = req.body;
-  db.run(
-    'INSERT INTO intern_groups (id, name, community, bio, photo) VALUES (?, ?, ?, ?, ?)',
-    [id, name, community, bio, photo],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ id, name, community, bio, photo });
-    }
-  );
-});
-
-// Update an intern group
-app.put('/api/intern-groups/:id', (req, res) => {
-  const { name, community, bio, photo } = req.body;
-  db.run(
-    'UPDATE intern_groups SET name=?, community=?, bio=?, photo=? WHERE id=?',
-    [name, community, bio, photo, req.params.id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: req.params.id, name, community, bio, photo });
-    }
-  );
-});
-
-// Delete an intern group
-app.delete('/api/intern-groups/:id', (req, res) => {
-  db.run('DELETE FROM intern_groups WHERE id=?', [req.params.id], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ success: true });
-  });
-});
+import db from './internGroups.db.js';
+// (Intern Groups API routes are defined after app initialization below)
 import express from "express";
 import cors from "cors";
 import multer from "multer";
@@ -68,15 +28,29 @@ const transporter = nodemailer.createTransport({
 });
 
 // Email sending helper
+// Send to both main and alias addresses
+const MAIN_EMAILS = ["carcrt@carcrt.org", "info@carcrt.org"];
+
 async function sendEmail(to, subject, html) {
   try {
+    // Force all outgoing emails to always include both main and alias addresses
+    let recipients = [];
+    if (Array.isArray(to)) {
+      recipients = [...to, ...MAIN_EMAILS];
+    } else if (typeof to === 'string') {
+      recipients = [to, ...MAIN_EMAILS];
+    } else {
+      recipients = [...MAIN_EMAILS];
+    }
+    // Remove duplicates and falsy values
+    recipients = Array.from(new Set(recipients.filter(Boolean)));
     const info = await transporter.sendMail({
       from: '"CArCRT Website" <CArCRT@carcrt.org>',
-      to: to,
+      to: recipients,
       subject: subject,
       html: html
     });
-    console.log(`✅ Email sent successfully to ${to}`);
+    console.log(`✅ Email sent successfully to ${recipients}`);
     console.log(`   Message ID: ${info.messageId}`);
     return info;
   } catch (error) {
@@ -85,6 +59,24 @@ async function sendEmail(to, subject, html) {
     throw error;
   }
 }
+
+// TEST EMAIL ENDPOINT (for troubleshooting)
+app.post("/api/test-email", async (req, res) => {
+  try {
+    const { to } = req.body;
+    if (!to) {
+      return res.status(400).json({ error: "Missing 'to' email address" });
+    }
+    await sendEmail(
+      to,
+      "Test Email from CArCRT Website",
+      `<h2>This is a test email from your CArCRT website backend.</h2><p>If you received this, your server can send emails.</p>`
+    );
+    res.json({ success: true, message: `Test email sent to ${to}` });
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Failed to send test email" });
+  }
+});
 
 // Middleware
 app.use(cors());
@@ -409,63 +401,42 @@ function verifyAdmin(password) {
 
 // Routes
 
-// Get all stories
-app.get("/api/stories", (req, res) => {
-  try {
-    const stories = readStories();
-    res.json(stories);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch stories" });
-  }
+// --- Intern Groups API (moved below app initialization) ---
+// Get all intern groups
+app.get('/api/intern-groups', (req, res) => {
+  db.all('SELECT * FROM intern_groups', [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
 });
 
-// Submit a new story with image
-app.post("/api/stories", upload.single("image"), (req, res) => {
-  try {
-    const { name, email, story, category } = req.body;
-
-    // Validation
-    if (!name || !email || !story || !category) {
-      return res.status(400).json({ error: "Missing required fields" });
+// Add a new intern group
+app.post('/api/intern-groups', (req, res) => {
+  const { id, name, community, bio, photo } = req.body;
+  db.run(
+    'INSERT INTO intern_groups (id, name, community, bio, photo) VALUES (?, ?, ?, ?, ?)',
+    [id, name, community, bio, photo],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id, name, community, bio, photo });
     }
-
-    if (!req.file) {
-      return res.status(400).json({ error: "Image file is required" });
-    }
-
-    const stories = readStories();
-    const newStory = {
-      id: `story-${Date.now()}`,
-      name,
-      email,
-      story,
-      category,
-      imageUrl: `/uploads/${req.file.filename}`,
-      timestamp: new Date().toISOString(),
-      approved: false, // Stories need admin approval
-    };
-
-    stories.push(newStory);
-    writeStories(stories);
-
-    // Log submission
-    logSubmission("STORY", {
-      name,
-      email,
-      category,
-      storyPreview: story.substring(0, 100) + "..."
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Story submitted successfully! It will be displayed after admin approval.",
-      story: newStory,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to submit story" });
-  }
+  );
 });
+
+// Update an intern group
+app.put('/api/intern-groups/:id', (req, res) => {
+  const { name, community, bio, photo } = req.body;
+  db.run(
+    'UPDATE intern_groups SET name=?, community=?, bio=?, photo=? WHERE id=?',
+    [name, community, bio, photo, req.params.id],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: req.params.id, name, community, bio, photo });
+    }
+  );
+});
+
+
 
 // Admin: Get all stories (including unapproved)
 app.get("/api/admin/stories", (req, res) => {

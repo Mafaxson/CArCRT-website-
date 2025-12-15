@@ -1,5 +1,6 @@
-// SQLite setup for intern groups
-const sqlite3 = require('sqlite3').verbose();
+
+// SQLite setup for intern groups (ESM)
+import sqlite3 from 'sqlite3';
 const db = new sqlite3.Database('./internGroups.db');
 
 db.serialize(() => {
@@ -12,4 +13,4 @@ db.serialize(() => {
   )`);
 });
 
-module.exports = db;
+export default db;
