@@ -204,17 +204,13 @@ export default function Leadership() {
             ) : (
               internGroups.map((group) => (
                 <div key={group.id} className="flex flex-col items-center justify-center">
-                  {group.photo ? (
+                  {group.photo && (
                     <img
                       src={group.photo}
                       alt={group.name}
                       className="w-full max-w-xl rounded shadow mb-4"
                       style={{ objectFit: 'cover' }}
                     />
-                  ) : (
-                    <div className="w-full max-w-xl h-48 flex items-center justify-center bg-accent/10 rounded shadow mb-4">
-                      <span className="text-muted-foreground">No photo</span>
-                    </div>
                   )}
                   <p className="text-center text-lg font-semibold text-primary mt-2">{group.name}</p>
                   <p className="text-center text-sm text-muted-foreground mt-1 max-w-2xl">{group.bio}</p>
