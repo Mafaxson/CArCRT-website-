@@ -10,6 +10,17 @@ import { ImageLightbox } from "@/components/ImageLightbox";
 import { supabase } from "@/lib/supabaseClient";
 import { getImageUrl } from "@/lib/imageUtils";
 
+interface Leader {
+  id: string;
+  name: string;
+  title?: string;
+  role?: string;
+  bio: string;
+  photo?: string;
+  type: "Leadership" | "Coordinator" | "Intern";
+  region?: string;
+  community?: string;
+}
 interface InternGroup {
   id: string;
   name: string;
@@ -18,49 +29,16 @@ interface InternGroup {
   photo?: string;
 }
 
-interface LeadershipMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  photo?: string;
-}
-
-interface Coordinator {
-  id: string;
-  name: string;
-  region: string;
-  bio: string;
-  photo?: string;
-}
-
-interface Intern {
-  id: string;
-  name: string;
-  community: string;
-  bio: string;
-  photo?: string;
-}
-
-export default function Leadership() {
-  const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>([]);
-  const [fieldCoordinators, setFieldCoordinators] = useState<Coordinator[]>([]);
+  const [leaders, setLeaders] = useState<Leader[]>([]);
   const [internGroups, setInternGroups] = useState<InternGroup[]>([]);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Leadership and coordinators from leadership.json
-        const res = await fetch('/data/leadership.json');
-        const data = await res.json();
-        const leadership = data.filter((m: any) => m.category === 'Leadership');
-        const coordinators = data.filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
-          ...c,
-          region: c.region || c.role || '',
-        }));
-        setLeadershipTeam(leadership);
-        setFieldCoordinators(coordinators);
+        // Fetch all leaders from Supabase
+        const { data } = await supabase.from("leadership").select("*");
+        setLeaders(data || []);
       } catch (error) {
         console.error('Failed to fetch leadership data:', error);
       }
@@ -108,11 +86,11 @@ export default function Leadership() {
             subtitle="Our core team bringing expertise and passion to community development"
           />
 
-          {leadershipTeam.length === 0 ? (
+          {leaders.filter(l => l.type === "Leadership").length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">No leadership team data found.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {leadershipTeam.map((member, index) => (
+              {leaders.filter(l => l.type === "Leadership").map((member, index) => (
                 <Card
                   key={member.id}
                   className="card-hover border-none shadow-card animate-fade-up"
@@ -134,7 +112,7 @@ export default function Leadership() {
                     <h3 className="font-heading font-semibold text-lg text-foreground mb-1">
                       {member.name}
                     </h3>
-                    <p className="text-primary font-medium text-sm mb-3">{member.role}</p>
+                    <p className="text-primary font-medium text-sm mb-3">{member.title || member.role}</p>
                     <p className="text-muted-foreground text-sm">{member.bio}</p>
                   </CardContent>
                 </Card>
@@ -152,11 +130,11 @@ export default function Leadership() {
             subtitle="Dedicated coordinators working across regions to drive community transformation"
           />
 
-          {fieldCoordinators.length === 0 ? (
+          {leaders.filter(l => l.type === "Coordinator").length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">No coordinators found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {fieldCoordinators.map((coordinator, index) => (
+              {leaders.filter(l => l.type === "Coordinator").map((coordinator, index) => (
                 <Card
                   key={coordinator.id}
                   className="card-hover border-none shadow-card animate-fade-up"
@@ -178,7 +156,7 @@ export default function Leadership() {
                     <h3 className="font-heading font-semibold text-foreground mb-1">
                       {coordinator.name}
                     </h3>
-                    <p className="text-accent font-medium text-sm mb-2">{coordinator.region}</p>
+                    <p className="text-accent font-medium text-sm mb-2">{coordinator.region || coordinator.role}</p>
                     {coordinator.bio && (
                       <p className="text-muted-foreground text-sm">{coordinator.bio}</p>
                     )}
