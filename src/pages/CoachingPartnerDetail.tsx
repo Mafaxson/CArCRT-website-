@@ -17,26 +17,22 @@ export default function CoachingPartnerDetail() {
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
-    // Hardcoded affiliate partner data
-    const affiliatePartner = {
-      id: "cp-1",
-      name: "Restoring AgriSolution Enterprises",
-      slug: "restoring-agrisolution-enterprises",
-      description: "Restoring AgriSolution Enterprises is a social-impact agribusiness dedicated to transforming agriculture and empowering communities in Sierra Leone. Through innovative farming practices, training programs, and market linkages, we work to improve food security, create sustainable livelihoods, and restore hope in rural communities.\n\nOur approach combines modern agricultural techniques with traditional knowledge, ensuring that farming is not only productive but also environmentally sustainable. We focus on empowering youth and women, providing them with the skills and resources needed to become successful agripreneurs.\n\nBy partnering with local communities and organizations like CArCRT, we are building a future where agriculture serves as a pathway out of poverty and a foundation for lasting community development.",
-      website: "",
-      focus: "Agriculture, Food Security, Youth & Women Empowerment",
-      established: "2021",
-      location: "Nongowa Chiefdom, Sierra Leone",
-      mission: "To nurture hope, restore dignity, and empower communities through sustainable agriculture and inclusive development that transforms lives and builds resilient futures.",
-      logo: "/uploads/1764943938537-WhatsApp Image 2025-12-05 at 13.55.47_0022de53.jpg",
-      team: []
+    const fetchPartner = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('coaching_partners')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (data) {
+        setPartner(data);
+        fetchGallery();
+      } else {
+        setPartner(null);
+      }
+      setLoading(false);
     };
-
-    if (slug === "restoring-agrisolution-enterprises") {
-      setPartner(affiliatePartner);
-      fetchGallery();
-    }
-    setLoading(false);
+    if (slug) fetchPartner();
   }, [slug]);
 
   const fetchGallery = async () => {
