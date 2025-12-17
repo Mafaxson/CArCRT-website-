@@ -32,15 +32,12 @@ export default function Events() {
   });
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .order('dateFrom', { ascending: false });
-        if (error) throw error;
+    // Only show the four original events from local JSON
+    fetch('/data/events.json')
+      .then((res) => res.json())
+      .then((json) => {
         // Map fields to expected frontend structure
-        const mapped = (data || []).map(event => ({
+        const mapped = json.map(event => ({
           ...event,
           date: event.dateFrom || event.date || "",
           time: event.time || "",
@@ -50,13 +47,12 @@ export default function Events() {
         }));
         setAllEvents(mapped);
         setFilteredEvents(mapped);
-      } catch (err) {
-        console.error('Error loading events from Supabase:', err);
+      })
+      .catch((err) => {
+        console.error('Error loading events.json:', err);
         setAllEvents([]);
         setFilteredEvents([]);
-      }
-    };
-    fetchEvents();
+      });
   }, []);
 
   useEffect(() => {

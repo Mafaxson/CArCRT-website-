@@ -53,9 +53,9 @@ export default function Index() {
   const [partners, setPartners] = useState<any[]>([]);
   const [featuredStories, setFeaturedStories] = useState<any[]>([]);
   const [stats, setStats] = useState({
-    membersReached: "-",
-    projectsImplemented: "-",
-    districtsEngaged: "-"
+    membersReached: "15,000+",
+    projectsImplemented: "15",
+    districtsEngaged: "5"
   });
 
   useEffect(() => {
@@ -79,18 +79,6 @@ export default function Index() {
             });
         } else {
           setPartners(partnersData.filter(p => p.type === 'Partner' || p.type === 'Sponsor'));
-        }
-        // Fetch stats from Supabase
-        const { data: statsData, error: statsError } = await supabase
-          .from('stats')
-          .select('*')
-          .single();
-        if (!statsError && statsData) {
-          setStats({
-            membersReached: statsData.membersReached || "-",
-            projectsImplemented: statsData.projectsImplemented || "-",
-            districtsEngaged: statsData.districtsEngaged || "-"
-          });
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);

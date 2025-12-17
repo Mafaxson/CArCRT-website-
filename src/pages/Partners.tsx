@@ -16,17 +16,38 @@ export default function Partners() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Partners & Sponsors from Supabase only
+    // 1. Show local JSON immediately
+    fetch('/data/partners.json')
+      .then((res) => res.json())
+      .then((json) => {
+        setPartners(json.filter(p => p.type === 'Partner' || p.type === 'Sponsor'));
+      })
+      .catch((err) => {
+        console.error('Error loading partners.json:', err);
+        setPartners([]);
+      });
+
+    // 2. Fetch from Supabase in background and update if available
     const fetchPartners = async () => {
       const { data, error } = await supabase.from('partners').select('*');
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         setPartners(data.filter(p => p.type === 'Partner' || p.type === 'Sponsor'));
-      } else {
-        setPartners([]);
       }
     };
     fetchPartners();
-    // Optionally: migrate gallery/restoringAgri to Supabase in future
+
+    // Fetch gallery from local JSON (can be migrated to Supabase if needed)
+    fetch('/data/gallery.json')
+      .then((res) => res.json())
+      .then((data) => setGallery(data))
+      .catch((err) => console.error('Error loading gallery.json:', err));
+    // Fetch affiliate/Restoring AgriSolution from local JSON (can be migrated to Supabase if needed)
+    fetch('/data/coaching-partners.json')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.length > 0) setRestoringAgri(data[0]);
+      })
+      .catch((err) => console.error('Error loading coaching-partners.json:', err));
   }, []);
   return (
     <Layout>

@@ -14,7 +14,7 @@ export default function CoachingPartners() {
   useEffect(() => {
     const fetchPartners = async () => {
       const { data, error } = await supabase
-        .from('coaching_partners')
+        .from('gallery')
         .select('*')
         .order('created_at', { ascending: false });
       if (data) setPartners(data);

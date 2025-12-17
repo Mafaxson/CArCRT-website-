@@ -62,11 +62,11 @@ export default function RestoringAgriSolutionEnterprises() {
           />
           {gallery && gallery.length > 0 ? (
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {gallery.map((item) => (
+              {gallery.map((item: any) => (
                 <Card key={item.id} className="card-hover border-none shadow-card animate-fade-up overflow-hidden">
                   <CardContent className="flex flex-col items-center p-4">
                     <img
-                      src={item.image}
+                      src={item.image_url || item.image}
                       alt={item.caption || 'Gallery image'}
                       className="w-full h-48 object-cover rounded mb-2"
                     />
