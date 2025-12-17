@@ -3,20 +3,25 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function RestoringAgriSolutionEnterprises() {
   const [restoringAgri, setRestoringAgri] = useState(null);
   const [gallery, setGallery] = useState([]);
 
   useEffect(() => {
+    // Fetch Restoring AgriSolution Enterprise info (still from static for now)
     fetch('/data/coaching-partners.json')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) setRestoringAgri(data[0]);
       });
-    fetch('/data/gallery.json')
-      .then((res) => res.json())
-      .then((data) => setGallery(data));
+    // Fetch gallery images from Supabase
+    const fetchGallery = async () => {
+      const { data } = await supabase.from("gallery").select("*");
+      setGallery(data || []);
+    };
+    fetchGallery();
   }, []);
 
   if (!restoringAgri) return null;
