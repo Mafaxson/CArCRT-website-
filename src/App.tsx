@@ -25,17 +25,7 @@ import Resources from "./pages/Resources";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
 import Accessibility from "./pages/Accessibility";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminStats from "./pages/admin/stats";
-import AdminPartners from "./pages/admin/partners";
-import AdminCoachingPartners from "./pages/admin/coaching";
-import AdminAffiliates from "./pages/admin/affiliates";
-import AdminGallery from "./pages/admin/gallery";
-import AdminLeadership from "./pages/admin/leadership";
-import AdminPrograms from "./pages/admin/programs";
-import AdminNews from "./pages/admin/news";
-import AdminEvents from "./pages/admin/events";
+// Admin pages removed
 import RestoringAgriSolutionEnterprises from "./pages/RestoringAgriSolutionEnterprises";
 
 const queryClient = new QueryClient();
@@ -67,18 +57,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route path="/accessibility" element={<Accessibility />} />
-          {/* Admin routes */}
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/stats" element={<AdminStats />} />
-          <Route path="/admin/partners" element={<AdminPartners />} />
-          <Route path="/admin/coaching" element={<AdminCoachingPartners />} />
-          <Route path="/admin/affiliates" element={<AdminAffiliates />} />
-          <Route path="/admin/gallery" element={<AdminGallery />} />
-          <Route path="/admin/leadership" element={<AdminLeadership />} />
-          <Route path="/admin/programs" element={<AdminPrograms />} />
-          <Route path="/admin/news" element={<AdminNews />} />
-          <Route path="/admin/events" element={<AdminEvents />} />
+          {/* Admin routes removed */}
           <Route path="/partners/restoring-agrisolution-enterprises" element={<RestoringAgriSolutionEnterprises />} />
         </Routes>
       </BrowserRouter>

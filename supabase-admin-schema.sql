@@ -96,3 +96,5 @@ create table if not exists events (
   description text
 );
 
+
+

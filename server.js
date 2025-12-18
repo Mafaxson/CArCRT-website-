@@ -174,8 +174,7 @@ if (!fs.existsSync(galleryDbPath)) {
   fs.writeFileSync(galleryDbPath, JSON.stringify([], null, 2));
 }
 
-// Admin credentials (in production, use environment variables)
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+// Admin logic removed
 
 // Helper functions
 function readStories() {
@@ -395,9 +394,7 @@ function logSubmission(type, data) {
   return submission;
 }
 
-function verifyAdmin(password) {
-  return password === ADMIN_PASSWORD;
-}
+// Admin logic removed
 
 // Routes
 
