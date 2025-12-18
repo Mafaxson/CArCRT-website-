@@ -51,7 +51,7 @@ export default function Leadership() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Leadership and coordinators from leadership.json
+        // Leadership, coordinators, and intern groups from leadership.json
         const res = await fetch('/data/leadership.json');
         const data = await res.json();
         const leadership = data.filter((m: any) => m.category === 'Leadership');
@@ -59,19 +59,12 @@ export default function Leadership() {
           ...c,
           region: c.region || c.role || '',
         }));
+        const internGroups = data.filter((m: any) => m.category === 'Intern Group');
         setLeadershipTeam(leadership);
         setFieldCoordinators(coordinators);
+        setInternGroups(internGroups);
       } catch (error) {
-        console.error('Failed to fetch leadership data:', error);
-      }
-      try {
-        // Intern groups from backend API
-        const res = await fetch('/api/intern-groups');
-        if (!res.ok) throw new Error('Failed to fetch intern groups');
-        const data = await res.json();
-        setInternGroups(data);
-      } catch (error) {
-        console.error('Failed to fetch intern groups:', error);
+        console.error('Failed to fetch leadership/intern group data:', error);
       }
     };
     fetchData();

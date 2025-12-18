@@ -591,6 +591,13 @@ export default function AdminDashboardNew() {
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
+                              <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => navigate(`/news/${article.id}`)}
+                              >
+                                Read More
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
