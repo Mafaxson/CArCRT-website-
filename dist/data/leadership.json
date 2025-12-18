@@ -1,5 +1,13 @@
 [
   {
+    "id": "intern-group-2025",
+    "name": "Internship Cohort 2025",
+    "community": "2025 Cohort",
+    "bio": "Meet our 2025 internship cohort, a group of passionate and dedicated interns making a difference this year.",
+    "photo": "/uploads/interns-2025.jpg",
+    "category": "Intern Group"
+  },
+  {
     "id": "intern-001",
     "name": "Samuel Williams",
     "community": "Communications Intern",
