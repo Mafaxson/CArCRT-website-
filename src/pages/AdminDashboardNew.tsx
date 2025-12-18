@@ -12,6 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+  // Auth protection: redirect if not logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/admin-login");
+      }
+    });
+  }, [navigate]);
 import { Pencil, Trash2, Plus, Check, X, Eye } from "lucide-react";
 
 export default function AdminDashboardNew() {

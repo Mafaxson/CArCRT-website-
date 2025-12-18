@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -79,24 +80,35 @@ export function ShareStoryForm({ onStorySubmit }: ShareStoryFormProps) {
     setLoading(true);
 
     try {
-      // Send story data and image to backend API for email delivery
-      const formPayload = new FormData();
-      formPayload.append("name", formData.name);
-      formPayload.append("email", formData.email);
-      formPayload.append("story", formData.story);
-      formPayload.append("category", formData.category);
-      if (image) formPayload.append("image", image);
+      let imageUrl = "";
+      if (image) {
+        // Upload image to Supabase Storage
+        const fileExt = image.name.split('.').pop();
+        const fileName = `${formData.name.replace(/\s+/g, "_")}_${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("story-images")
+          .upload(fileName, image, { upsert: false });
+        if (uploadError) throw uploadError;
+        imageUrl = uploadData?.path ? supabase.storage.from("story-images").getPublicUrl(uploadData.path).data.publicUrl : "";
+      }
 
-      const res = await fetch("/api/submit/story", {
-        method: "POST",
-        body: formPayload,
-      });
-
-      if (!res.ok) throw new Error("Failed to submit story");
+      // Insert submission as 'pending' into Supabase
+      const { error: insertError } = await supabase.from("submissions").insert([
+        {
+          type: "story",
+          status: "pending",
+          data: {
+            name: formData.name,
+            email: formData.email,
+            story: formData.story,
+            category: formData.category,
+            imageUrl,
+          },
+        },
+      ]);
+      if (insertError) throw insertError;
 
       toast.success("Story submitted successfully! Thank you for sharing your impact.");
-
-      // Reset form
       setFormData({
         name: "",
         email: "",

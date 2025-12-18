@@ -1,3 +1,16 @@
+// DEPRECATED: This legacy AdminDashboard uses insecure custom backend endpoints and password logic.
+// Do NOT use. Use the new Supabase-based admin dashboard in pages/AdminDashboardNew.tsx instead.
+
+export default function DeprecatedAdminDashboard() {
+  return (
+    <div className="p-8 text-red-600 font-bold text-xl">
+      This legacy AdminDashboard is deprecated and should not be used. Please use the new Supabase-based admin dashboard.
+    </div>
+  );
+}
+
+// Legacy code below (commented out):
+/*
 
 import { useState } from "react";
 
