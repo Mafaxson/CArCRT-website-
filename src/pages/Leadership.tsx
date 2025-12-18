@@ -51,23 +51,20 @@ export default function Leadership() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all leadership data from Supabase
-        const { data, error } = await supabase.from('leadership').select('*');
-        if (error) throw error;
-        // Leadership team
-        const leadership = (data || []).filter((m: any) => m.category === 'Leadership');
-        // Coordinators
-        const coordinators = (data || []).filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
+        // Leadership, coordinators, and intern groups from leadership.json
+        const res = await fetch('/data/leadership.json');
+        const data = await res.json();
+        const leadership = data.filter((m: any) => m.category === 'Leadership');
+        const coordinators = data.filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
           ...c,
           region: c.region || c.role || '',
         }));
-        // Intern Groups
-        const internGroups = (data || []).filter((m: any) => m.category === 'Intern Group');
+        const internGroups = data.filter((m: any) => m.category === 'Intern Group');
         setLeadershipTeam(leadership);
         setFieldCoordinators(coordinators);
         setInternGroups(internGroups);
       } catch (error) {
-        console.error('Failed to fetch leadership/intern group data from Supabase:', error);
+        console.error('Failed to fetch leadership/intern group data:', error);
       }
     };
     fetchData();
