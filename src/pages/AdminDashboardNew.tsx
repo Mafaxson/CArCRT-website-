@@ -402,7 +402,7 @@ export default function AdminDashboardNew() {
         </DialogContent>
       </Dialog>
 
-      <section className="section-padding bg-muted/50">
+      <section className="section-padding bg-white">
         <div className="container-custom px-2 sm:px-4 md:px-8 lg:px-12">
           <div className="flex justify-between items-center mb-8">
             <h1 className="font-heading text-3xl font-bold">Admin Dashboard</h1>
