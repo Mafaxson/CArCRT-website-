@@ -25,7 +25,7 @@ import Resources from "./pages/Resources";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
 import Accessibility from "./pages/Accessibility";
-// Admin pages removed
+import AdminDashboardNew from "./pages/AdminDashboardNew";
 import RestoringAgriSolutionEnterprises from "./pages/RestoringAgriSolutionEnterprises";
 
 const queryClient = new QueryClient();
@@ -57,7 +57,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route path="/accessibility" element={<Accessibility />} />
-          {/* Admin routes removed */}
+          <Route path="/admin-dashboard" element={<AdminDashboardNew />} />
           <Route path="/partners/restoring-agrisolution-enterprises" element={<RestoringAgriSolutionEnterprises />} />
         </Routes>
       </BrowserRouter>
