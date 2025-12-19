@@ -7,68 +7,20 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageLightbox } from "@/components/ImageLightbox";
-import { supabase } from "@/lib/supabaseClient";
-import { getImageUrl } from "@/lib/imageUtils";
+// Only using static JSON for all data
 
-interface InternGroup {
-  id: string;
-  name: string;
-  community: string;
-  bio: string;
-  photo?: string;
-}
-
-interface LeadershipMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  photo?: string;
-}
-
-interface Coordinator {
-  id: string;
-  name: string;
-  region: string;
-  bio: string;
-  photo?: string;
-}
-
-interface Intern {
-  id: string;
-  name: string;
-  community: string;
-  bio: string;
-  photo?: string;
-}
-
-export default function Leadership() {
-  const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>([]);
-  const [fieldCoordinators, setFieldCoordinators] = useState<Coordinator[]>([]);
-  const [internGroups, setInternGroups] = useState<InternGroup[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Load leadership, coordinators, and intern groups from static JSON
-        const res = await fetch('/data/leadership.json');
-        const data = await res.json();
-        const leadership = data.filter((m: any) => m.category === 'Leadership');
-        const coordinators = data.filter((m: any) => m.category === 'Coordinator').map((c: any) => ({
-          ...c,
-          region: c.region || c.role || '',
-        }));
-        const internGroups = data.filter((m: any) => m.category === 'Intern Group');
-        setLeadershipTeam(leadership);
-        setFieldCoordinators(coordinators);
-        setInternGroups(internGroups);
-      } catch (error) {
-        console.error('Failed to fetch leadership/intern group data:', error);
-      }
-    };
-    fetchData();
+    fetch('/data/leadership.json')
+      .then((res) => res.json())
+      .then((json) => setData(json));
   }, []);
+
+  const leadershipTeam = data.filter((m) => m.category === 'Leadership');
+  const fieldCoordinators = data.filter((m) => m.category === 'Coordinator');
+  const internGroups = data.filter((m) => m.category === 'Intern Group');
+  const interns = data.filter((m) => m.category === 'Representative');
 
   return (
     <Layout>
@@ -114,10 +66,10 @@ export default function Leadership() {
                   <CardContent className="p-6 text-center">
                     {member.photo ? (
                       <img
-                        src={getImageUrl(member.photo)}
+                        src={member.photo}
                         alt={member.name}
                         className="w-24 h-24 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => setLightboxImage({ src: getImageUrl(member.photo!), alt: member.name })}
+                        onClick={() => setLightboxImage({ src: member.photo, alt: member.name })}
                       />
                     ) : (
                       <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center">
@@ -158,10 +110,10 @@ export default function Leadership() {
                   <CardContent className="p-6 text-center">
                     {coordinator.photo ? (
                       <img
-                        src={getImageUrl(coordinator.photo)}
+                        src={coordinator.photo}
                         alt={coordinator.name}
                         className="w-16 h-16 mx-auto mb-4 rounded-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => setLightboxImage({ src: getImageUrl(coordinator.photo!), alt: coordinator.name })}
+                        onClick={() => setLightboxImage({ src: coordinator.photo, alt: coordinator.name })}
                       />
                     ) : (
                       <div className="w-16 h-16 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
@@ -171,7 +123,7 @@ export default function Leadership() {
                     <h3 className="font-heading font-semibold text-foreground mb-1">
                       {coordinator.name}
                     </h3>
-                    <p className="text-accent font-medium text-sm mb-2">{coordinator.region}</p>
+                    <p className="text-accent font-medium text-sm mb-2">{coordinator.role}</p>
                     {coordinator.bio && (
                       <p className="text-muted-foreground text-sm">{coordinator.bio}</p>
                     )}
@@ -210,6 +162,27 @@ export default function Leadership() {
                   {group.community && (
                     <p className="text-center text-xs text-muted-foreground mt-1 max-w-2xl">{group.community}</p>
                   )}
+                </div>
+              ))
+            )}
+          </div>
+          {/* Interns (Representatives) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-8">
+            {interns.length === 0 ? (
+              <div className="text-center text-muted-foreground col-span-2">No interns found.</div>
+            ) : (
+              interns.map((intern) => (
+                <div key={intern.id} className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                  {intern.photo && (
+                    <img
+                      src={intern.photo}
+                      alt={intern.name}
+                      className="w-32 h-32 object-cover rounded-full mb-4"
+                    />
+                  )}
+                  <h3 className="text-xl font-bold mb-1 text-center">{intern.name}</h3>
+                  <p className="text-sm font-medium text-gray-600 mb-2 text-center">{intern.community}</p>
+                  <p className="text-gray-700 text-center">{intern.bio}</p>
                 </div>
               ))
             )}
