@@ -12,6 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+export default function AdminDashboardNew() {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   // Auth protection: redirect if not logged in
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
