@@ -24,6 +24,9 @@
 
   <body>
     <script>
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
       window.onbeforeunload = function () {
         window.scrollTo(0, 0);
       };
