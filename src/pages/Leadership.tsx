@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ImageLightbox } from "@/components/ImageLightbox";
 // Only using static JSON for all data
 
+function Leadership() {
   const [data, setData] = useState<any[]>([]);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
   useEffect(() => {
@@ -210,3 +211,5 @@ import { ImageLightbox } from "@/components/ImageLightbox";
     </Layout>
   );
 }
+
+export default Leadership;
