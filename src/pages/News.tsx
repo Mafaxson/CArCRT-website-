@@ -102,7 +102,7 @@ export default function News() {
             <Card className="overflow-hidden border-none shadow-card animate-fade-up">
               <CardContent className="p-0">
                 <div className="grid md:grid-cols-2">
-                  <a href={featuredPost.videoUrl || `/news/${featuredPost.id}`} target={featuredPost.videoUrl ? "_blank" : "_self"} rel={featuredPost.videoUrl ? "noopener noreferrer" : undefined} className="bg-gradient-to-br from-primary to-primary/70 p-8 md:p-12 text-primary-foreground min-h-[350px] flex flex-col justify-end relative cursor-pointer">
+                  <Link to={`/news/${featuredPost.id}`} className="bg-gradient-to-br from-primary to-primary/70 p-8 md:p-12 text-primary-foreground min-h-[350px] flex flex-col justify-end relative cursor-pointer group">
                     {featuredPost.videoUrl && getVideoThumbnail(featuredPost.videoUrl) && !featuredPost.image && (
                       <>
                         <img 
@@ -129,12 +129,21 @@ export default function News() {
                       </div>
                     )}
                     {featuredPost.image && (
-                      <img 
-                        src={getImageUrl(featuredPost.image)} 
-                        alt={featuredPost.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-20 hover:opacity-25 transition-opacity"
-                        onClick={(e) => { e.preventDefault(); setLightboxImage({ src: getImageUrl(featuredPost.image), alt: featuredPost.title }); }}
-                      />
+                      <>
+                        <img 
+                          src={getImageUrl(featuredPost.image)} 
+                          alt={featuredPost.title}
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 hover:opacity-25 transition-opacity"
+                        />
+                        <button
+                          type="button"
+                          className="absolute top-4 right-4 z-20 bg-white/80 rounded-full p-2 shadow hover:bg-white"
+                          onClick={e => { e.preventDefault(); setLightboxImage({ src: getImageUrl(featuredPost.image), alt: featuredPost.title }); }}
+                          aria-label="Preview image"
+                        >
+                          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                      </>
                     )}
                     <div className="relative z-10">
                       <h2 className="font-heading text-2xl md:text-3xl font-bold mb-2">{featuredPost.title}</h2>
@@ -143,7 +152,7 @@ export default function News() {
                         {featuredPost.date}
                       </span>
                     </div>
-                  </a>
+                  </Link>
                   <div className="p-8 md:p-12 flex flex-col justify-center">
                     <span className="text-primary font-medium text-sm mb-2">Featured Article</span>
                     <p className="text-muted-foreground mb-6">{featuredPost.excerpt}</p>
