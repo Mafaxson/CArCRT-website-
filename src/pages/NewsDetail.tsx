@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, FileText, ExternalLink } from "lucide-react";
 import { ImageLightbox } from "@/components/ImageLightbox";
-import { supabase } from "@/lib/supabaseClient";
+// import { supabase } from "@/lib/supabaseClient";
 import { getImageUrl } from "@/lib/imageUtils";
 
 interface NewsArticle {
@@ -69,19 +69,12 @@ const NewsDetail = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const { data, error } = await supabase
-          .from('news')
-          .select('*')
-          .eq('id', id)
-          .single();
-        
-        if (data) {
-          setArticle(data);
+        const res = await fetch('/data/news.json');
+        const data = await res.json();
+        const found = data.find((item: NewsArticle) => item.id === id);
+        if (found) {
+          setArticle(found);
         } else {
-          navigate("/news");
-        }
-        if (error) {
-          console.error('Supabase error:', error);
           navigate("/news");
         }
       } catch (error) {
@@ -91,7 +84,6 @@ const NewsDetail = () => {
         setLoading(false);
       }
     };
-
     fetchArticle();
   }, [id, navigate]);
 
