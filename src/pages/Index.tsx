@@ -61,7 +61,7 @@ export default function Index() {
 
   // Swiper for hero images
   const heroImages = [
-    { src: "/uploads/1765194925004-afrikspark-logo-CsOOX9EH.png", alt: "Christmas Message Flyer" },
+    { src: "/lovable-uploads/Christmas message flyers .jpeg", alt: "Christmas Message Flyer" },
     { src: teamPhoto, alt: "CArCRT Team Group Photo" }
   ];
   const [heroIndex, setHeroIndex] = useState(0);
