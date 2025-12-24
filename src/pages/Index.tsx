@@ -7,7 +7,7 @@ import { Heart, Users, Target, Sprout, GraduationCap, Droplets, Leaf, Scale, Shi
 import { useState, useEffect } from "react";
 import logo from "@/assets/logo.png";
 import teamPhoto from "@/assets/team-photo.jpg";
-import christmasFlyer from "@/assets/christmas-message-flyer.jpg";
+// import christmasFlyer from "@/assets/christmas-message-flyer.jpg";
 import { supabase } from "@/lib/supabaseClient";
 import { getImageUrl } from "@/lib/imageUtils";
 
@@ -61,7 +61,7 @@ export default function Index() {
 
   // Swiper for hero images
   const heroImages = [
-    { src: christmasFlyer, alt: "Christmas Message Flyer" },
+    { src: "/uploads/1765194925004-afrikspark-logo-CsOOX9EH.png", alt: "Christmas Message Flyer" },
     { src: teamPhoto, alt: "CArCRT Team Group Photo" }
   ];
   const [heroIndex, setHeroIndex] = useState(0);
