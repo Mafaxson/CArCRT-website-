@@ -22,6 +22,5 @@
   { "id": "coordinator-1764868173708", "name": "James Mustapha Tailu", "role": "Education Officer", "bio": "", "photo": "/uploads/1764868173704-WhatsApp Image 2025-12-04 at 16.57.46_4bc850ee.jpg", "category": "Coordinator" },
   { "id": "coordinator-1764931342750", "name": "Hawanatu Konneh ", "role": "Procurement Officer", "bio": "", "photo": "/uploads/1764931342743-WhatsApp Image 2025-12-04 at 18.14.19_1e285a50.jpg", "category": "Coordinator" },
 
-  { "id": "intern-group-2025", "name": "Internship Cohort 2025", "community": "2025 Cohort", "bio": "Meet our 2025 internship cohort, a group of passionate and dedicated interns making a difference this year.", "photo": "/uploads/interns-2025.jpg", "category": "Intern Group" },
-
+	{ "id": "intern-group-2025", "name": "Internship Cohort 2025", "community": "2025 Cohort", "bio": "Meet our 2025 internship cohort, a group of passionate and dedicated interns making a difference this year.", "photo": "/uploads/interns-2025.jpg", "category": "Intern Group" }
 ]
