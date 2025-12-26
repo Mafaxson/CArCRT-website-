@@ -24,8 +24,4 @@
 
   { "id": "intern-group-2025", "name": "Internship Cohort 2025", "community": "2025 Cohort", "bio": "Meet our 2025 internship cohort, a group of passionate and dedicated interns making a difference this year.", "photo": "/uploads/interns-2025.jpg", "category": "Intern Group" },
 
-  { "id": "intern-001", "name": "Samuel Williams", "community": "Communications Intern", "bio": "Managing social media and community communications.", "photo": "/uploads/intern-samuel.jpg", "category": "Representative" },
-  { "id": "intern-002", "name": "Mariatu Conteh", "community": "M&E Intern", "bio": "Assisting with monitoring, evaluation, and data collection.", "photo": "/uploads/intern-mariatu.jpg", "category": "Representative" },
-  { "id": "intern-003", "name": "Alpha Jalloh", "community": "Community Outreach Intern", "bio": "Supporting community outreach and engagement activities.", "photo": "/uploads/intern-alpha.jpg", "category": "Representative" },
-  { "id": "intern-004", "name": "Hawa Kamara", "community": "Youth Programs Representative", "bio": "Youth advocate working directly with community youth groups.", "photo": "/uploads/intern-hawa.jpg", "category": "Representative" }
 ]
